@@ -1,7 +1,7 @@
 module CubedSphereAquaplanet
 
-using Oceananigans
+include("BarotropicAquaplanet/BarotropicAquaplanet.jl")
 
-# Write your package code here.
+using .BarotropicAquaplanet
 
-end
+end # module CubedSphereAquaplanet
