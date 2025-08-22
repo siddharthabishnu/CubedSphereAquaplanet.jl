@@ -4,8 +4,8 @@ function TracerAdvectionParameters()
     # Domain extents and resolution
     R = R_Earth  # Radius of the sphere (m)
     Lz = 1000    # Depth of the domain (m)
-    Nx = 32      # Number of grid cells in the local x direction
-    Ny = 32      # Number of grid cells in the local y direction
+    Nx = 128     # Number of grid cells in the local x direction
+    Ny = 128     # Number of grid cells in the local y direction
     Nz = 1       # Number of grid cells in the z direction
     H = 6        # Number of halo cells in each horizontal direction
     
