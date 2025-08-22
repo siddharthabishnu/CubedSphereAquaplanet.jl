@@ -160,6 +160,10 @@ function interpolate_cubed_sphere_field_to_cell_centers(grid, field, field_locat
                                                         ssh::Bool = false,
                                                         levels::UnitRange{Int} = 1:1,
                                                         read_parent_field_data::Bool = false)
+    if field_location == "cc" && read_parent_field_data
+        return field
+    end
+
     Nx, Ny, Nz, hx, hy, hz = compute_size_metrics(grid, read_parent_field_data)
 
     if ssh
@@ -174,24 +178,23 @@ function interpolate_cubed_sphere_field_to_cell_centers(grid, field, field_locat
 
     set!(interpolated_field, 0)
 
-    for region in 1:number_of_regions(grid), j in 1:Ny, i in 1:Nx
+    @inbounds for region in 1:number_of_regions(grid), j in 1:Ny, i in 1:Nx
+        dest = getregion(interpolated_field, region)
+        src  = getregion(field, region)
+
         if field_location == "fc"
-            getregion(interpolated_field, region)[i, j, levels_interpolated_field] = (
-                0.5(getregion(field, region)[i+hx, j+hy, levels_field]
-                    + getregion(field, region)[i+1+hx, j+hy, levels_field]))
+            dest[i, j, levels_interpolated_field] = 0.5(src[i+hx, j+hy, levels_field] + src[i+1+hx, j+hy, levels_field])
+
         elseif field_location == "cf"
-            getregion(interpolated_field, region)[i, j, levels_interpolated_field] = (
-                0.5(getregion(field, region)[i+hx, j+hy, levels_field]
-                    + getregion(field, region)[i+hx, j+1+hy, levels_field]))
+            dest[i, j, levels_interpolated_field] = 0.5(src[i+hx, j+hy, levels_field] + src[i+hx, j+1+hy, levels_field])
+
         elseif field_location == "ff"
-            getregion(interpolated_field, region)[i, j, levels_interpolated_field] = (
-                0.25(getregion(field, region)[i+hx, j+hy, levels_field]
-                     + getregion(field, region)[i+1+hx, j+hy, levels_field]
-                     + getregion(field, region)[i+1+hx, j+1+hy, levels_field]
-                     + getregion(field, region)[i+hx, j+1+hy, levels_field]))
+            dest[i, j, levels_interpolated_field] = 0.25(src[i+hx, j+hy, levels_field] + src[i+1+hx, j+hy, levels_field]
+                                                         + src[i+1+hx, j+1+hy, levels_field]
+                                                         + src[i+hx, j+1+hy, levels_field])
+
         elseif field_location == "cc"
-            getregion(interpolated_field, region)[i, j, levels_interpolated_field] = (
-                getregion(field, region)[i+hx, j+hy, levels_field])
+            dest[i, j, levels_interpolated_field] = src[i+hx, j+hy, levels_field]
         end
     end
 
