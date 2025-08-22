@@ -12,7 +12,7 @@ import Imaginocean: heatlatlon!
 using Oceananigans: location, CubedSphereField
 using Imaginocean: get_grid, get_lat_lon_nodes_and_vertices
 
-function heatlatlon!(ax::Axis, field, k_index::Int=1; suppress_shading_warning::Bool=false, kwargs...)
+function heatlatlon!(ax::Axis, field, k_index::Int=1; suppress_shading_warning::Bool=true, kwargs...)
     LX, LY, LZ = location(field)
 
     grid = get_grid(field)
@@ -22,13 +22,13 @@ function heatlatlon!(ax::Axis, field, k_index::Int=1; suppress_shading_warning::
     quad_points = vcat([Point2.(λvertices[:, i, j], φvertices[:, i, j])
                         for i in axes(λvertices, 2), j in axes(λvertices, 3)]...)
     quad_faces = vcat([begin; j = (i-1) * 4 + 1; [j j+1  j+2; j+2 j+3 j]; end for i in 1:length(quad_points)÷4]...)
-
     colors_per_point = vcat(fill.(vec(interior(field, :, :, k_index)), 4)...)
+    shading = suppress_shading_warning ? Makie.NoShading : false
 
-    mesh!(ax, quad_points, quad_faces; color = colors_per_point, shading = Makie.NoShading, kwargs...)
+    mesh!(ax, quad_points, quad_faces; color = colors_per_point, shading, kwargs...)
 end
 
-function heatlatlon!(ax::Axis, field::CubedSphereField, k_index::Int=1; suppress_shading_warning::Bool=false, kwargs...)
+function heatlatlon!(ax::Axis, field::CubedSphereField, k_index::Int=1; suppress_shading_warning::Bool=true, kwargs...)
     apply_regionally!(heatlatlon!, ax, field, k_index; suppress_shading_warning, kwargs...)
 
     xlims!(ax, (-180, 180))
@@ -36,7 +36,7 @@ function heatlatlon!(ax::Axis, field::CubedSphereField, k_index::Int=1; suppress
 end
 
 heatlatlon!(ax::Axis, field::Observable{<:CubedSphereField}, k_index::Int=1;
-            suppress_shading_warning::Bool=false, kwargs...) = (
+            suppress_shading_warning::Bool=true, kwargs...) = (
     heatlatlon!(ax, field.val, k_index; suppress_shading_warning, kwargs...))
 
 function compute_size_metrics(grid::ConformalCubedSphereGridOfSomeKind, k::Int, ssh::Bool, read_parent_field_data::Bool)
@@ -351,7 +351,7 @@ function panelwise_visualization_animation(grid, field_time_series;
         Colorbar(fig[pos[1], pos[2] + 1], hm)
     end
 
-    frames = start_index:Δ:size(field_time_series_array, 5)
+    frames = start_index:size(field_time_series_array, 5)
     CairoMakie.record(fig, filename * format, frames, framerate = framerate) do i
         print("Plotting frame $i of $(frames[end]) \r")
         field[] = field_time_series_array[:, :, :, :, i]
@@ -408,7 +408,7 @@ function geo_heatlatlon_visualization_animation(grid, field_time_series, field_l
     colsize!(fig.layout, 1, Auto(0.8))
     colgap!(fig.layout, 75)
 
-    frames = start_index:Δ:length(field_time_series)
+    frames = start_index:length(field_time_series)
     CairoMakie.record(fig, filename * format, frames, framerate = framerate) do i
         print("Plotting frame $i of $(frames[end]) \r")
 
