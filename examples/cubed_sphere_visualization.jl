@@ -418,7 +418,7 @@ function panelwise_visualization_animation_frames(grid, field_time_series;
 end
 
 function panelwise_visualization_animation(grid, field_time_series;
-                                           plot_frames::Bool = true,
+                                           plot_frames::Bool = false,
                                            with_halos::Bool = false,
                                            start_index::Int = 1,
                                            k::Int = 1,
@@ -573,7 +573,7 @@ end
 
 function geo_heatlatlon_visualization_animation(grid, field_time_series, field_location, prettytimes,
                                                 title_prefix;
-                                                plot_frames::Bool = true,
+                                                plot_frames::Bool = false,
                                                 start_index::Int = 1,
                                                 k::Int = 1,
                                                 use_symmetric_colorrange::Bool = true,
