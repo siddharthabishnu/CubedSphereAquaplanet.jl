@@ -303,21 +303,22 @@ function geo_heatlatlon_visualization(grid, field, field_location, title;
     return fig
 end
 
-function panelwise_visualization_animation(grid, field_time_series;
-                                           with_halos::Bool = false,
-                                           start_index::Int = 1,
-                                           k::Int = 1,
-                                           use_symmetric_colorrange::Bool = true,
-                                           ssh::Bool = false,
-                                           consider_all_levels::Bool = true,
-                                           levels::UnitRange{Int} = k:k,
-                                           read_parent_field_data::Bool = false,
-                                           Δ::Int = 1,
-                                           colorrange::Union{Nothing, Vector{Float64}} = nothing,
-                                           colormap::Union{Nothing, Symbol} = nothing,
-                                           framerate::Int = 10,
-                                           filename::AbstractString = "panelwise_visualization_animation",
-                                           format::AbstractString = ".mp4")
+function panelwise_visualization_animation_Makie(grid, field_time_series;
+                                                 with_halos::Bool = false,
+                                                 start_index::Int = 1,
+                                                 k::Int = 1,
+                                                 use_symmetric_colorrange::Bool = true,
+                                                 ssh::Bool = false,
+                                                 consider_all_levels::Bool = true,
+                                                 levels::UnitRange{Int} = k:k,
+                                                 read_parent_field_data::Bool = false,
+                                                 Δ::Int = 1,
+                                                 colorrange::Union{Nothing, Vector{Float64}} = nothing,
+                                                 colormap::Union{Nothing, Symbol} = nothing,
+                                                 framerate::Int = 10,
+                                                 output_directory::AbstractString = "output_directory",
+                                                 filename::AbstractString = "filename",
+                                                 format::AbstractString = ".mp4")
     field_time_series_array = extract_field_time_series_array(grid, field_time_series;
                                                               with_halos, ssh, consider_all_levels, levels,
                                                               read_parent_field_data)
@@ -352,7 +353,7 @@ function panelwise_visualization_animation(grid, field_time_series;
     end
 
     frames = start_index:size(field_time_series_array, 5)
-    CairoMakie.record(fig, filename * format, frames, framerate = framerate) do i
+    CairoMakie.record(fig, joinpath(output_directory, filename * format), frames, framerate = framerate) do i
         print("Plotting frame $i of $(frames[end]) \r")
         field[] = field_time_series_array[:, :, :, :, i]
         for (i, pos) in enumerate(panel_positions)
@@ -363,21 +364,109 @@ function panelwise_visualization_animation(grid, field_time_series;
     end
 end
 
-function geo_heatlatlon_visualization_animation(grid, field_time_series, field_location, prettytimes, title_prefix;
-                                                start_index::Int = 1,
-                                                k::Int = 1,
-                                                use_symmetric_colorrange::Bool = true,
-                                                ssh::Bool = false,
-                                                consider_all_levels::Bool = true,
-                                                levels::UnitRange{Int} = k:k,
-                                                read_parent_field_data::Bool = false,
-                                                Δ::Int = 1,
-                                                colorrange::Union{Nothing, Vector{Float64}} = nothing,
-                                                colormap::Union{Nothing, Symbol} = nothing,
-                                                colorbarlabel::String = "",
-                                                framerate::Int = 10,
-                                                filename::AbstractString = "panelwise_visualization_animation",
-                                                format::AbstractString = ".mp4")
+function panelwise_visualization_animation_frames(grid, field_time_series;
+                                                  with_halos::Bool = false,
+                                                  start_index::Int = 1,
+                                                  k::Int = 1,
+                                                  use_symmetric_colorrange::Bool = true,
+                                                  ssh::Bool = false,
+                                                  consider_all_levels::Bool = true,
+                                                  levels::UnitRange{Int} = k:k,
+                                                  read_parent_field_data::Bool = false,
+                                                  Δ::Int = 1,
+                                                  colorrange::Union{Nothing, Vector{Float64}} = nothing,
+                                                  colormap::Union{Nothing, Symbol} = nothing,
+                                                  output_directory::AbstractString = "output_directory",
+                                                  filename::AbstractString = "filename",
+                                                  format::AbstractString = ".png")
+    field_time_series_array = extract_field_time_series_array(grid, field_time_series;
+                                                              with_halos, ssh, consider_all_levels, levels,
+                                                              read_parent_field_data)
+
+    fig = Figure(size = (2450, 1400))
+
+    axis_kwargs = (xlabelsize = 22.5, ylabelsize = 22.5, xlabelpadding = 10, ylabelpadding = 10, xticklabelsize = 17.5,
+                   yticklabelsize = 17.5, xticklabelpad = 20, yticklabelpad = 20, aspect = 1.0, titlesize = 27.5,
+                   titlegap = 15, titlefont = :bold, xlabel = "Local x direction", ylabel = "Local y direction")
+
+    if isnothing(colorrange)
+        colorrange = specify_colorrange_time_series(grid, field_time_series;
+                                                    ssh, consider_all_levels, levels, read_parent_field_data, Δ,
+                                                    use_symmetric_colorrange)
+    end
+
+    colormap = something(colormap, use_symmetric_colorrange ? :balance : :amp)
+
+    Nx, Ny, Nz, hx, hy, hz, k, levels = compute_size_metrics(grid, k, ssh, read_parent_field_data)
+
+    panel_positions = [(3, 1), (3, 3), (2, 3), (2, 5), (1, 5), (1, 7)]
+
+    frames = start_index:size(field_time_series_array, 5)
+    for i in frames
+        print("Plotting frame $i of $(frames[end]) \r")
+        field = field_time_series_array[:, :, :, :, i]
+        for (j, pos) in enumerate(panel_positions)
+            ax = Axis(fig[pos...]; title = "Panel $j", axis_kwargs...)
+            hm = heatmap!(ax, parent(field[:, :, k, j]); colorrange, colormap)
+            Colorbar(fig[pos[1], pos[2] + 1], hm)
+        end
+        save(joinpath(output_directory, filename * "_$i" * format), fig)
+    end
+end
+
+function panelwise_visualization_animation(grid, field_time_series;
+                                           plot_frames::Bool = true,
+                                           with_halos::Bool = false,
+                                           start_index::Int = 1,
+                                           k::Int = 1,
+                                           use_symmetric_colorrange::Bool = true,
+                                           ssh::Bool = false,
+                                           consider_all_levels::Bool = true,
+                                           levels::UnitRange{Int} = k:k,
+                                           read_parent_field_data::Bool = false,
+                                           Δ::Int = 1,
+                                           colorrange::Union{Nothing, Vector{Float64}} = nothing,
+                                           colormap::Union{Nothing, Symbol} = nothing,
+                                           framerate::Int = 10,
+                                           output_directory::AbstractString = "output_directory",
+                                           filename::AbstractString = "filename",
+                                           figure_format::AbstractString = ".png",
+                                           movie_format::AbstractString = ".mp4")
+    if plot_frames
+        format = figure_format
+        path = joinpath(pwd(), output_directory * "/" * filename * "_frames")
+        isdir(path) || mkdir(path)
+        filename = joinpath(filename * "_frames/", filename)
+        panelwise_visualization_animation_frames(grid, field_time_series;
+                                                 with_halos, start_index, k, use_symmetric_colorrange, ssh,
+                                                 consider_all_levels, levels, read_parent_field_data, Δ, colorrange,
+                                                 colormap, output_directory, filename, format)
+    else
+        format = movie_format
+        panelwise_visualization_animation_Makie(grid, field_time_series;
+                                                with_halos, start_index, k, use_symmetric_colorrange, ssh,
+                                                consider_all_levels, levels, read_parent_field_data, Δ, colorrange,
+                                                colormap, framerate, output_directory, filename, format)
+    end
+end
+
+function geo_heatlatlon_visualization_animation_Makie(grid, field_time_series, field_location, prettytimes,
+                                                      title_prefix;
+                                                      start_index::Int = 1,
+                                                      k::Int = 1,
+                                                      use_symmetric_colorrange::Bool = true,
+                                                      ssh::Bool = false,
+                                                      consider_all_levels::Bool = true,
+                                                      levels::UnitRange{Int} = k:k,
+                                                      read_parent_field_data::Bool = false,
+                                                      Δ::Int = 1,
+                                                      colorrange::Union{Nothing, Vector{Float64}} = nothing,
+                                                      colormap::Union{Nothing, Symbol} = nothing,
+                                                      colorbarlabel::String = "",
+                                                      framerate::Int = 10,
+                                                      output_directory::AbstractString = "output_directory",
+                                                      filename::AbstractString = "filename",
+                                                      format::AbstractString = ".mp4")
     # Observables
     n = Observable(start_index) # the current index
     field = @lift field_time_series[$n]
@@ -409,7 +498,7 @@ function geo_heatlatlon_visualization_animation(grid, field_time_series, field_l
     colgap!(fig.layout, 75)
 
     frames = start_index:length(field_time_series)
-    CairoMakie.record(fig, filename * format, frames, framerate = framerate) do i
+    CairoMakie.record(fig, joinpath(output_directory, filename * format), frames, framerate = framerate) do i
         print("Plotting frame $i of $(frames[end]) \r")
 
         field[] = field_time_series[i]
@@ -426,5 +515,95 @@ function geo_heatlatlon_visualization_animation(grid, field_time_series, field_l
                  ticklabelsize = 30, ticksize = 22.5, width = 35, height = Relative(1))
         colsize!(fig.layout, 1, Auto(0.8))
         colgap!(fig.layout, 75)
+    end
+end
+
+function geo_heatlatlon_visualization_animation_frames(grid, field_time_series, field_location, prettytimes,
+                                                       title_prefix;
+                                                       start_index::Int = 1,
+                                                       k::Int = 1,
+                                                       use_symmetric_colorrange::Bool = true,
+                                                       ssh::Bool = false,
+                                                       consider_all_levels::Bool = true,
+                                                       levels::UnitRange{Int} = k:k,
+                                                       read_parent_field_data::Bool = false,
+                                                       Δ::Int = 1,
+                                                       colorrange::Union{Nothing, Vector{Float64}} = nothing,
+                                                       colormap::Union{Nothing, Symbol} = nothing,
+                                                       colorbarlabel::String = "",
+                                                       output_directory::AbstractString = "output_directory",
+                                                       filename::AbstractString = "filename",
+                                                       format::AbstractString = ".png")
+    # Create the initial visualization.
+    fig = Figure(size = (2700, 1300))
+
+    axis_kwargs = (xlabelsize = 37.5, ylabelsize = 37.5, xlabelpadding = 25, ylabelpadding = 25, xticklabelsize = 32.5,
+                   yticklabelsize = 32.5, xticklabelpad = 20, yticklabelpad = 20, titlesize = 45, titlegap = 30,
+                   titlefont = :bold)
+
+    if isnothing(colorrange)
+        colorrange = specify_colorrange_time_series(grid, field_time_series;
+                                                    ssh, consider_all_levels, levels, read_parent_field_data, Δ,
+                                                    use_symmetric_colorrange)
+    end
+
+    colormap = something(colormap, use_symmetric_colorrange ? :balance : :amp)
+
+    ax = Axis(fig[1, 1]; axis_kwargs...)
+
+    Colorbar(fig[1, 2]; limits = colorrange, colormap, label = colorbarlabel, labelsize = 37.5, labelpadding = 25,
+             ticklabelsize = 30, ticksize = 22.5, width = 35, height = Relative(1))
+    colsize!(fig.layout, 1, Auto(0.8))
+    colgap!(fig.layout, 75)
+
+    frames = start_index:length(field_time_series)
+    for i in frames
+        print("Plotting frame $i of $(frames[end]) \r")
+        field = field_time_series[i]
+        prettytime = prettytimes[i]
+        ax.title = title_prefix * " after " * prettytime
+        interpolated_field = interpolate_cubed_sphere_field_to_cell_centers(grid, field, field_location; levels = k:k)
+        heatlatlon!(ax, interpolated_field, k; colorrange, colormap)
+        save(joinpath(output_directory, filename * "_$i" * format), fig)
+    end
+end
+
+function geo_heatlatlon_visualization_animation(grid, field_time_series, field_location, prettytimes,
+                                                title_prefix;
+                                                plot_frames::Bool = true,
+                                                start_index::Int = 1,
+                                                k::Int = 1,
+                                                use_symmetric_colorrange::Bool = true,
+                                                ssh::Bool = false,
+                                                consider_all_levels::Bool = true,
+                                                levels::UnitRange{Int} = k:k,
+                                                read_parent_field_data::Bool = false,
+                                                Δ::Int = 1,
+                                                colorrange::Union{Nothing, Vector{Float64}} = nothing,
+                                                colormap::Union{Nothing, Symbol} = nothing,
+                                                colorbarlabel::String = "",
+                                                framerate::Int = 10,
+                                                output_directory::AbstractString = "output",
+                                                filename::AbstractString = "filename",
+                                                figure_format::AbstractString = ".png",
+                                                movie_format::AbstractString = ".mp4")
+    if plot_frames
+        format = figure_format
+        path = joinpath(pwd(), output_directory * "/" * filename * "_frames")
+        isdir(path) || mkdir(path)
+        filename = joinpath(filename * "_frames/", filename)
+        geo_heatlatlon_visualization_animation_frames(grid, field_time_series, field_location, prettytimes,
+                                                      title_prefix;
+                                                      start_index, k, use_symmetric_colorrange, ssh,
+                                                      consider_all_levels, levels, read_parent_field_data, Δ,
+                                                      colorrange, colormap, colorbarlabel, output_directory, filename,
+                                                      format)
+    else
+        format = movie_format
+        geo_heatlatlon_visualization_animation_Makie(grid, field_time_series, field_location, prettytimes,
+                                                     title_prefix;
+                                                     start_index, k, use_symmetric_colorrange, ssh, consider_all_levels,
+                                                     levels, read_parent_field_data, Δ, colorrange, colormap,
+                                                     colorbarlabel, framerate, output_directory, filename, format)
     end
 end
