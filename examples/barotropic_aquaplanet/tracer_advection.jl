@@ -15,7 +15,7 @@ tracer_advection_grid = TracerAdvectionGrid(tracer_advection_parameters; arch)
 CourantNumber = 0.2
 Δt = CourantNumber * min(Δx, Δy) / tracer_advection_parameters.U # CFL for tracer advection
 
-stop_time = 2π * tracer_advection_parameters.U / tracer_advection_parameters.R
+stop_time = 2π * tracer_advection_parameters.R / tracer_advection_parameters.U
 Ntime = ceil(Int, stop_time / Δt)
 # Redefine the stop time.
 stop_time = Ntime * Δt
