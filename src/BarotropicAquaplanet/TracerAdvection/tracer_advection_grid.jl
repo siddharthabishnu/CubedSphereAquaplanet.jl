@@ -1,4 +1,4 @@
-function TracerAdvectionGrid(tracer_advection_parameters; arch = CPU(), FT::DataType = Float64)
+function TracerAdvectionGrid(tracer_advection_parameters; arch = CPU(), FT::DataType = Oceananigans.defaults.FloatType)
     tracer_advection_grid = ConformalCubedSphereGrid(
         arch, FT;
         panel_size = (tracer_advection_parameters.Nx, tracer_advection_parameters.Ny, tracer_advection_parameters.Nz),

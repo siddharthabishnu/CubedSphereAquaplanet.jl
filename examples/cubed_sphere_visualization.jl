@@ -1,3 +1,4 @@
+using Oceananigans
 using Oceananigans.Grids: halo_size
 using Oceananigans.MultiRegion: number_of_regions, ConformalCubedSphereGridOfSomeKind
 using Oceananigans.Utils: getregion
@@ -233,7 +234,7 @@ function panelwise_visualization(grid, field;
                                  consider_all_levels::Bool = true,
                                  levels::UnitRange{Int} = k:k,
                                  read_parent_field_data::Bool = false,
-                                 colorrange::Union{Nothing, Vector{Float64}} = nothing,
+                                 colorrange::Union{Nothing, Vector} = nothing,
                                  colormap::Union{Nothing, Symbol} = nothing)
     fig = Figure(size = (2450, 1400))
 
@@ -279,7 +280,7 @@ function geo_heatlatlon_visualization(grid, field, field_location, title;
                                       levels::UnitRange{Int} = k:k,
                                       read_parent_field_data::Bool = false,
                                       colorbarlabel::String = "",
-                                      colorrange::Union{Nothing, Vector{Float64}} = nothing,
+                                      colorrange::Union{Nothing, Vector} = nothing,
                                       colormap::Union{Nothing, Symbol} = nothing)
     fig = Figure(size = (2700, 1300))
 
@@ -316,7 +317,7 @@ function panelwise_visualization_animation_Makie(grid, field_time_series;
                                                  levels::UnitRange{Int} = k:k,
                                                  read_parent_field_data::Bool = false,
                                                  Δ::Int = 1,
-                                                 colorrange::Union{Nothing, Vector{Float64}} = nothing,
+                                                 colorrange::Union{Nothing, Vector} = nothing,
                                                  colormap::Union{Nothing, Symbol} = nothing,
                                                  framerate::Int = 10,
                                                  output_directory::AbstractString = "output_directory",
@@ -377,7 +378,7 @@ function panelwise_visualization_animation_frames(grid, field_time_series;
                                                   levels::UnitRange{Int} = k:k,
                                                   read_parent_field_data::Bool = false,
                                                   Δ::Int = 1,
-                                                  colorrange::Union{Nothing, Vector{Float64}} = nothing,
+                                                  colorrange::Union{Nothing, Vector} = nothing,
                                                   colormap::Union{Nothing, Symbol} = nothing,
                                                   output_directory::AbstractString = "output_directory",
                                                   filename::AbstractString = "filename",
@@ -428,7 +429,7 @@ function panelwise_visualization_animation(grid, field_time_series;
                                            levels::UnitRange{Int} = k:k,
                                            read_parent_field_data::Bool = false,
                                            Δ::Int = 1,
-                                           colorrange::Union{Nothing, Vector{Float64}} = nothing,
+                                           colorrange::Union{Nothing, Vector} = nothing,
                                            colormap::Union{Nothing, Symbol} = nothing,
                                            framerate::Int = 10,
                                            output_directory::AbstractString = "output_directory",
@@ -463,7 +464,7 @@ function geo_heatlatlon_visualization_animation_Makie(grid, field_time_series, f
                                                       levels::UnitRange{Int} = k:k,
                                                       read_parent_field_data::Bool = false,
                                                       Δ::Int = 1,
-                                                      colorrange::Union{Nothing, Vector{Float64}} = nothing,
+                                                      colorrange::Union{Nothing, Vector} = nothing,
                                                       colormap::Union{Nothing, Symbol} = nothing,
                                                       colorbarlabel::String = "",
                                                       framerate::Int = 10,
@@ -531,7 +532,7 @@ function geo_heatlatlon_visualization_animation_frames(grid, field_time_series, 
                                                        levels::UnitRange{Int} = k:k,
                                                        read_parent_field_data::Bool = false,
                                                        Δ::Int = 1,
-                                                       colorrange::Union{Nothing, Vector{Float64}} = nothing,
+                                                       colorrange::Union{Nothing, Vector} = nothing,
                                                        colormap::Union{Nothing, Symbol} = nothing,
                                                        colorbarlabel::String = "",
                                                        output_directory::AbstractString = "output_directory",
@@ -582,7 +583,7 @@ function geo_heatlatlon_visualization_animation(grid, field_time_series, field_l
                                                 levels::UnitRange{Int} = k:k,
                                                 read_parent_field_data::Bool = false,
                                                 Δ::Int = 1,
-                                                colorrange::Union{Nothing, Vector{Float64}} = nothing,
+                                                colorrange::Union{Nothing, Vector} = nothing,
                                                 colormap::Union{Nothing, Symbol} = nothing,
                                                 colorbarlabel::String = "",
                                                 framerate::Int = 10,
