@@ -4,7 +4,7 @@ function TracerAdvectionGrid(tracer_advection_parameters; arch = CPU(), FT::Data
         panel_size = (tracer_advection_parameters.Nx, tracer_advection_parameters.Ny, tracer_advection_parameters.Nz),
         z = (-tracer_advection_parameters.Lz, 0),
         radius = tracer_advection_parameters.R,
-        horizontal_direction_halo = 6,
+        horizontal_direction_halo = tracer_advection_parameters.H,
         partition = CubedSpherePartition(; R = 1))
 
     return tracer_advection_grid

@@ -7,7 +7,7 @@ function TracerAdvectionSimulation(
     grid = TracerAdvectionGrid(parameters; arch),
     momentum_advection = nothing,
     tracer_advection = WENO(order=9),
-    free_surface = ExplicitFreeSurface(; gravitational_acceleration = 9.80665),
+    free_surface = ExplicitFreeSurface(; gravitational_acceleration = parameters.g),
     tracers = :θ,
     buoyancy = nothing,
     Courant_number = 0.2,
@@ -30,12 +30,12 @@ function TracerAdvectionSimulation(
     
     tracer_advection_model = (
         HydrostaticFreeSurfaceModel(; grid,
-                                    velocities = PrescribedVelocityFields(; u, v),
-                                    momentum_advection,
-                                    tracer_advection,
-                                    free_surface,
-                                    tracers,
-                                    buoyancy))
+                                      velocities = PrescribedVelocityFields(; u, v),
+                                      momentum_advection,
+                                      tracer_advection,
+                                      free_surface,
+                                      tracers,
+                                      buoyancy))
 
 
     @info "Initializing model..."

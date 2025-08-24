@@ -1,3 +1,4 @@
+using Oceananigans.BuoyancyFormulations: g_Earth
 using Oceananigans.Grids: R_Earth
 
 function TracerAdvectionParameters()
@@ -16,6 +17,8 @@ function TracerAdvectionParameters()
     θ₀ = 1                   # Tracer amplitude
     Δφ = 20                  # Range of the exponential tracer profile
 
+    g = g_Earth              # Earth's gravitational acceleration (m s⁻²)
+
     tracer_advection_parameters = (
         R = R,
         Lz = Lz,
@@ -27,7 +30,8 @@ function TracerAdvectionParameters()
         φʳ = φʳ,
         α = α,
         θ₀ = θ₀,
-        Δφ = Δφ
+        Δφ = Δφ,
+        g = g
     )
 
     return tracer_advection_parameters

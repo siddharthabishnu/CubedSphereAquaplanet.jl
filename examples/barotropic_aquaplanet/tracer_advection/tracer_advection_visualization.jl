@@ -1,8 +1,8 @@
-include("../cubed_sphere_visualization.jl")
+include("../../cubed_sphere_visualization.jl")
 
 function TracerAdvectionVisualization!(tracer_advection_grid, θ₀, Nplots, Δt, plot_iteration_interval, prettytimes,
                                        framerate;
-                                       output_directory = "tracer_advection",
+                                       output_directory = "tracer_advection_output",
                                        output_filename = "tracer_advection_output.jld2",
                                        make_panelwise_visualization_plots_with_halos = false,
                                        make_panelwise_visualization_plots = false,

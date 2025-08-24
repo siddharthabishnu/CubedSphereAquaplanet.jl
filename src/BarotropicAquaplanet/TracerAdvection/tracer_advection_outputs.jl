@@ -1,5 +1,5 @@
 function TracerAdvectionOutputs!(tracer_advection_simulation;
-                                 output_directory = "tracer_advection",
+                                 output_directory = "tracer_advection_output",
                                  verbose = false, 
                                  overwrite_existing = true,
                                  checkpointer_interval = 5days, 

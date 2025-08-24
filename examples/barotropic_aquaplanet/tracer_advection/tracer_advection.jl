@@ -46,10 +46,10 @@ include("tracer_advection_visualization.jl")
 Nplots = 5
 plot_iteration_interval = floor(Int, Nframes / Nplots)
 prettytimes = [prettytime((i - 1) * tracer_interval) for i in 1:Nframes+1]
-make_panelwise_visualization_plots_with_halos = true
+make_panelwise_visualization_plots_with_halos = false
 make_panelwise_visualization_plots = true
 make_geo_heatlatlon_visualization_plots = true
-make_panelwise_visualization_animation_with_halos = true
+make_panelwise_visualization_animation_with_halos = false
 make_panelwise_visualization_animation = true
 make_geo_heatlatlon_visualization_animation = true
 TracerAdvectionVisualization!(tracer_advection_grid, tracer_advection_parameters.θ₀, Nplots, Δt,
