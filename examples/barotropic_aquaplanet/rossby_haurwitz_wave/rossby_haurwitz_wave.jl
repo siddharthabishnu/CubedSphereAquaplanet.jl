@@ -54,15 +54,19 @@ plot_iteration_interval = floor(Int, Nframes / Nplots)
 prettytimes = [prettytime((i - 1) * output_interval) for i in 1:Nframes+1]
 make_panelwise_visualization_plots_with_halos = false
 make_panelwise_visualization_plots = true
-make_geo_heatlatlon_visualization_plots = true
+geo_heatmap_type = "heatsphere"
+make_geo_heatmap_visualization_plots = true
+plot_frames = false
 make_panelwise_visualization_animation_with_halos = false
 make_panelwise_visualization_animation = true
-make_geo_heatlatlon_visualization_animation = true
+make_geo_heatmap_visualization_animation = true
 RossbyHaurwitzWaveVisualization!(rossby_haurwitz_wave_grid, Nplots, Δt,
                                  plot_iteration_interval, prettytimes, framerate;
                                  make_panelwise_visualization_plots_with_halos,
                                  make_panelwise_visualization_plots,
-                                 make_geo_heatlatlon_visualization_plots,
+                                 geo_heatmap_type,
+                                 make_geo_heatmap_visualization_plots,
+                                 plot_frames,
                                  make_panelwise_visualization_animation_with_halos,
                                  make_panelwise_visualization_animation,
-                                 make_geo_heatlatlon_visualization_animation)
+                                 make_geo_heatmap_visualization_animation)

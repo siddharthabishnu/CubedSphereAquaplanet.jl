@@ -16,8 +16,8 @@ function RossbyHaurwitzWaveParameters()
     K = 7.848e-6
     ω = 0
     
-    g = g_Earth # Earth's gravitational acceleration (m s⁻²)
-    Ω = Ω_Earth # Earth's rotational rate (s⁻¹)
+    g = g_Earth  # Earth's gravitational acceleration (m s⁻²)
+    Ω = Ω_Earth  # Earth's rotational rate (s⁻¹)
 
     rossby_haurwitz_wave_parameters = (
         R = R,    
