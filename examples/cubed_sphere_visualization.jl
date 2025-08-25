@@ -1,6 +1,5 @@
 using Oceananigans
-using Oceananigans.Grids: halo_size
-using Oceananigans.MultiRegion: number_of_regions, ConformalCubedSphereGridOfSomeKind
+using Oceananigans.MultiRegion: number_of_regions
 using Oceananigans.Utils: getregion
 #=
 Install Imaginocean.jl in your home environment (not the current project):
@@ -12,6 +11,8 @@ import Imaginocean: heatlatlon!
 
 using Oceananigans: location, CubedSphereField
 using Imaginocean: get_grid, get_lat_lon_nodes_and_vertices
+
+include("cubed_sphere_diagnostics.jl")
 
 function heatlatlon!(ax::Axis, field, k_index::Int=1; suppress_shading_warning::Bool=true, kwargs...)
     LX, LY, LZ = location(field)
@@ -40,50 +41,15 @@ heatlatlon!(ax::Axis, field::Observable{<:CubedSphereField}, k_index::Int=1;
             suppress_shading_warning::Bool=true, kwargs...) = (
     heatlatlon!(ax, field.val, k_index; suppress_shading_warning, kwargs...))
 
-function compute_size_metrics!(grid::ConformalCubedSphereGridOfSomeKind, field::CubedSphereField, ssh::Bool,
-                               consider_all_levels::Bool, levels::UnitRange{Int}, read_parent_field_data::Bool)
-    Nx, Ny, Nz = size(field)
-    Hx, Hy, Hz = halo_size(grid)
-
-    hx = read_parent_field_data ? Hx : 0
-    hy = read_parent_field_data ? Hy : 0
-    hz = read_parent_field_data ? Hz : 0
-    
-    if ssh
-        consider_all_levels = false
-        levels = read_parent_field_data ? (1:1) : (Nz+1:Nz+1)
-    else
-        if consider_all_levels
-            levels = 1:Nz .+ hz
-        else
-            levels = levels .+ hz
-        end
-    end
-
-    return Nx, Ny, Nz, hx, hy, hz
-end
-
-function compute_vertical_index!(grid::ConformalCubedSphereGridOfSomeKind, field::CubedSphereField, k::Int, ssh::Bool,
-                                 read_parent_field_data::Bool)
-    Nz = size(field, 3)
-    Hz = halo_size(grid)[3]
-    hz = read_parent_field_data ? Hz : 0
-    if ssh
-        k = read_parent_field_data ? 1 : Nz + 1
-    else
-        k += hz
-    end
-end
-
-function specify_colorrange!(grid, field;
-                             k::Int = 1,
-                             ssh::Bool = false,
-                             consider_all_levels::Bool = true,
-                             levels::UnitRange{Int} = k:k,
-                             read_parent_field_data::Bool = false,
-                             use_symmetric_colorrange::Bool = true)
-    Nx, Ny, Nz, hx, hy, hz = compute_size_metrics!(grid, field, ssh, consider_all_levels, levels,
-                                                   read_parent_field_data)
+function specify_colorrange(grid, field;
+                            k::Int = 1,
+                            ssh::Bool = false,
+                            consider_all_levels::Bool = true,
+                            levels::UnitRange{Int} = k:k,
+                            read_parent_field_data::Bool = false,
+                            use_symmetric_colorrange::Bool = true)
+    Nx, Ny, Nz, hx, hy, hz, consider_all_levels, levels = compute_size_metrics(
+        grid, field, ssh, consider_all_levels, levels, read_parent_field_data)
     
     field_array = zeros(Nx, Ny, length(levels), 6)
     for region in 1:number_of_regions(grid)
@@ -103,90 +69,16 @@ function specify_colorrange!(grid, field;
     return colorrange
 end
 
-function extract_field_time_series_array!(grid, field_time_series;
-                                          with_halos::Bool = false,
-                                          ssh::Bool = false,
-                                          consider_all_levels::Bool = true,
-                                          levels::UnitRange{Int} = 1:1,
-                                          read_parent_field_data::Bool = false,
-                                          Δ::Int = 1)
-    Nx, Ny, Nz, hx, hy, hz = compute_size_metrics!(grid, field_time_series[1], ssh, consider_all_levels, levels,
-                                                   read_parent_field_data)
-    Hx, Hy, Hz = halo_size(grid)
-    
-    n = length(field_time_series)
-    m = floor(Int, (length(field_time_series) - 1)/Δ + 1)
-
-    if with_halos
-        field_time_series_array = zeros(Nx+2Hx, Ny+2Hy, length(levels), 6, m)
-    else
-        field_time_series_array = zeros(Nx, Ny, length(levels), 6, m)
-    end
-
-    j = 0
-    for i in 1:Δ:n
-        j += 1
-        for region in 1:number_of_regions(grid)
-            if with_halos
-                field_time_series_array[:, :, :, region, j] = (
-                    getregion(field_time_series[i], region)[1-Hx+hx:Nx+Hx+hx, 1-Hy+hy:Ny+Hy+hy, levels])
-            else
-                field_time_series_array[:, :, :, region, j] = (
-                    getregion(field_time_series[i], region)[1+hx:Nx+hx, 1+hy:Ny+hy, levels])
-            end
-        end
-    end
-    
-    return field_time_series_array
-end
-
-function interpolate_cubed_sphere_field_to_cell_centers!(grid, field, field_location;
-                                                         ssh::Bool = false,
-                                                         consider_all_levels::Bool = true,
-                                                         levels::UnitRange{Int} = 1:1,
-                                                         read_parent_field_data::Bool = false)
-    if field_location == "cc" && read_parent_field_data
-        return field
-    end
-    Nx, Ny, Nz, hx, hy, hz = compute_size_metrics!(grid, field, ssh, consider_all_levels, levels,
-                                                   read_parent_field_data)
-
-    interpolated_field = Field{Center, Center, Center}(grid, indices = (:, :, levels))
-
-    set!(interpolated_field, 0)
-
-    @inbounds for region in 1:number_of_regions(grid), j in 1:Ny, i in 1:Nx
-        dest = getregion(interpolated_field, region)
-        src  = getregion(field, region)
-
-        if field_location == "fc"
-            dest[i, j, levels] = 0.5(src[i+hx, j+hy, levels] + src[i+1+hx, j+hy, levels])
-
-        elseif field_location == "cf"
-            dest[i, j, levels] = 0.5(src[i+hx, j+hy, levels] + src[i+hx, j+1+hy, levels])
-
-        elseif field_location == "ff"
-            dest[i, j, levels] = 0.25(src[i+hx, j+hy, levels] + src[i+1+hx, j+hy, levels] + src[i+1+hx, j+1+hy, levels]
-                                      + src[i+hx, j+1+hy, levels])
-
-        elseif field_location == "cc"
-            dest[i, j, levels] = src[i+hx, j+hy, levels]
-        end
-    end
-
-    return interpolated_field
-end
-
-function specify_colorrange_time_series!(grid, field_time_series;
-                                         ssh::Bool = false,
-                                         consider_all_levels::Bool = true,
-                                         levels::UnitRange{Int} = 1:1,
-                                         read_parent_field_data::Bool = false,
-                                         Δ::Int = 1,
-                                         use_symmetric_colorrange::Bool = true)
+function specify_colorrange_time_series(grid, field_time_series;
+                                        ssh::Bool = false,
+                                        consider_all_levels::Bool = true,
+                                        levels::UnitRange{Int} = 1:1,
+                                        read_parent_field_data::Bool = false,
+                                        Δ::Int = 1,
+                                        use_symmetric_colorrange::Bool = true)
     field_time_series_array = (
-        extract_field_time_series_array!(grid, field_time_series;
-                                         ssh, consider_all_levels, levels, read_parent_field_data, Δ))
+        extract_field_time_series_array(grid, field_time_series;
+                                        ssh, consider_all_levels, levels, read_parent_field_data, Δ))
 
     field_maximum = maximum(field_time_series_array)
     field_minimum = minimum(field_time_series_array)
@@ -218,15 +110,16 @@ function panelwise_visualization(grid, field;
                    titlegap = 15, titlefont = :bold, xlabel = "Local x direction", ylabel = "Local y direction")
 
     if isnothing(colorrange)
-        colorrange = specify_colorrange!(grid, field;
-                                         k, ssh, consider_all_levels, levels, read_parent_field_data,
-                                         use_symmetric_colorrange)
+        colorrange = specify_colorrange(grid, field;
+                                        k, ssh, consider_all_levels, levels, read_parent_field_data,
+                                        use_symmetric_colorrange)
     end
 
     colormap = something(colormap, use_symmetric_colorrange ? :balance : :amp)
 
-    Nx, Ny, Nz, hx, hy, hz = compute_size_metrics!(grid, field, ssh, consider_all_levels, levels,
-                                                   read_parent_field_data)
+    Nx, Ny, Nz, hx, hy, hz, consider_all_levels, levels = compute_size_metrics(
+        grid, field, ssh, consider_all_levels, levels, read_parent_field_data)
+    k = compute_vertical_index(grid, field, k, ssh, read_parent_field_data)
 
     function slice_panel_data(f, panel)
         if with_halos
@@ -264,14 +157,14 @@ function geo_heatlatlon_visualization(grid, field, field_location, title;
                    yticklabelsize = 32.5, xticklabelpad = 20, yticklabelpad = 20, titlesize = 45, titlegap = 30,
                    titlefont = :bold)
 
-    interpolated_field = interpolate_cubed_sphere_field_to_cell_centers!(grid, field, field_location;
-                                                                         ssh, consider_all_levels, levels,
-                                                                         read_parent_field_data)
+    interpolated_field = interpolate_cubed_sphere_field_to_cell_centers(grid, field, field_location;
+                                                                        ssh, consider_all_levels, levels,
+                                                                        read_parent_field_data)
 
     if isnothing(colorrange)
-        colorrange = specify_colorrange!(grid, interpolated_field;
-                                         k, ssh, consider_all_levels, levels, read_parent_field_data,
-                                         use_symmetric_colorrange)
+        colorrange = specify_colorrange(grid, interpolated_field;
+                                        k, ssh, consider_all_levels, levels, read_parent_field_data,
+                                        use_symmetric_colorrange)
     end
 
     colormap = something(colormap, use_symmetric_colorrange ? :balance : :amp)
@@ -303,10 +196,10 @@ function panelwise_visualization_animation_Makie(grid, field_time_series;
                                                  output_directory::AbstractString = "output_directory",
                                                  filename::AbstractString = "filename",
                                                  format::AbstractString = ".mp4")
-    field_time_series_array = extract_field_time_series_array!(grid, field_time_series;
-                                                               with_halos, ssh, consider_all_levels, levels,
-                                                               read_parent_field_data, Δ)
-    compute_vertical_index!(grid, field_time_series[1], k, ssh, read_parent_field_data)
+    field_time_series_array = extract_field_time_series_array(grid, field_time_series;
+                                                              with_halos, ssh, consider_all_levels, levels,
+                                                              read_parent_field_data, Δ)
+    k = compute_vertical_index(grid, field_time_series[1], k, ssh, read_parent_field_data)
 
     # Observables
     n = Observable(start_index) # the current index
@@ -320,9 +213,9 @@ function panelwise_visualization_animation_Makie(grid, field_time_series;
                    titlegap = 15, titlefont = :bold, xlabel = "Local x direction", ylabel = "Local y direction")
 
     if isnothing(colorrange)
-        colorrange = specify_colorrange_time_series!(grid, field_time_series;
-                                                     ssh, consider_all_levels, levels, read_parent_field_data, Δ,
-                                                     use_symmetric_colorrange)
+        colorrange = specify_colorrange_time_series(grid, field_time_series;
+                                                    ssh, consider_all_levels, levels, read_parent_field_data, Δ,
+                                                    use_symmetric_colorrange)
     end
 
     colormap = something(colormap, use_symmetric_colorrange ? :balance : :amp)
@@ -362,10 +255,10 @@ function panelwise_visualization_animation_frames(grid, field_time_series;
                                                   output_directory::AbstractString = "output_directory",
                                                   filename::AbstractString = "filename",
                                                   format::AbstractString = ".png")
-    field_time_series_array = extract_field_time_series_array!(grid, field_time_series;
-                                                               with_halos, ssh, consider_all_levels, levels,
-                                                               read_parent_field_data, Δ)
-    compute_vertical_index!(grid, field_time_series[1], k, ssh, read_parent_field_data)
+    field_time_series_array = extract_field_time_series_array(grid, field_time_series;
+                                                              with_halos, ssh, consider_all_levels, levels,
+                                                              read_parent_field_data, Δ)
+    k = compute_vertical_index(grid, field_time_series[1], k, ssh, read_parent_field_data)
 
     fig = Figure(size = (2450, 1400))
 
@@ -374,9 +267,9 @@ function panelwise_visualization_animation_frames(grid, field_time_series;
                    titlegap = 15, titlefont = :bold, xlabel = "Local x direction", ylabel = "Local y direction")
 
     if isnothing(colorrange)
-        colorrange = specify_colorrange_time_series!(grid, field_time_series;
-                                                     ssh, consider_all_levels, levels, read_parent_field_data, Δ,
-                                                     use_symmetric_colorrange)
+        colorrange = specify_colorrange_time_series(grid, field_time_series;
+                                                    ssh, consider_all_levels, levels, read_parent_field_data, Δ,
+                                                    use_symmetric_colorrange)
     end
 
     colormap = something(colormap, use_symmetric_colorrange ? :balance : :amp)
@@ -471,10 +364,9 @@ function geo_heatlatlon_visualization_animation_Makie(grid, field_time_series, f
 
     ax = Axis(fig[1, 1]; axis_kwargs...)
     ax.title = title_prefix * " after " * prettytime[]
-    interpolated_field = interpolate_cubed_sphere_field_to_cell_centers!(grid, field[], field_location;
-                                                                         ssh, consider_all_levels, levels,
-                                                                         read_parent_field_data)
-    compute_vertical_index!(grid, field[], k, ssh, read_parent_field_data)
+    interpolated_field = interpolate_cubed_sphere_field_to_cell_centers(grid, field[], field_location;
+                                                                        ssh, consider_all_levels, levels,
+                                                                        read_parent_field_data)
     heatlatlon!(ax, interpolated_field, k; colorrange, colormap)
 
     Colorbar(fig[1, 2]; limits = colorrange, colormap, label = colorbarlabel, labelsize = 37.5, labelpadding = 25,
@@ -493,9 +385,9 @@ function geo_heatlatlon_visualization_animation_Makie(grid, field_time_series, f
         ax.title = title_prefix * " after " * prettytime[]
 
         # Update the plot.
-        interpolated_field = interpolate_cubed_sphere_field_to_cell_centers!(grid, field[], field_location;
-                                                                             ssh, consider_all_levels, levels,
-                                                                             read_parent_field_data)
+        interpolated_field = interpolate_cubed_sphere_field_to_cell_centers(grid, field[], field_location;
+                                                                            ssh, consider_all_levels, levels,
+                                                                            read_parent_field_data)
         heatlatlon!(ax, interpolated_field, k; colorrange, colormap)
 
         Colorbar(fig[1, 2]; limits = colorrange, colormap, label = colorbarlabel, labelsize = 37.5, labelpadding = 25,
@@ -543,17 +435,15 @@ function geo_heatlatlon_visualization_animation_frames(grid, field_time_series, 
     colsize!(fig.layout, 1, Auto(0.8))
     colgap!(fig.layout, 75)
 
-    compute_vertical_index!(grid, field_time_series[1], k, ssh, read_parent_field_data)
-
     frames = start_index:length(field_time_series)
     for i in frames
         print("Plotting frame $i of $(frames[end]) \r")
         field = field_time_series[i]
         prettytime = prettytimes[i]
         ax.title = title_prefix * " after " * prettytime
-        interpolated_field = interpolate_cubed_sphere_field_to_cell_centers!(grid, field, field_location;
-                                                                             ssh, consider_all_levels, levels,
-                                                                             read_parent_field_data)
+        interpolated_field = interpolate_cubed_sphere_field_to_cell_centers(grid, field, field_location;
+                                                                            ssh, consider_all_levels, levels,
+                                                                            read_parent_field_data)
         heatlatlon!(ax, interpolated_field, k; colorrange, colormap)
         save(joinpath(output_directory, filename * "_$i" * format), fig)
     end
