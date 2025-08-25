@@ -2,19 +2,20 @@ using Oceananigans.Advection: EnstrophyConserving
 using Oceananigans.Units: minutes, hours, days
 using Oceananigans.Utils: getregion
 
-function RossbyHaurwitzWaveSimulation(
+function BickleyJetSimulation(
     arch;
-    parameters = RossbyHaurwitzWaveParameters(),
-    grid = RossbyHaurwitzWaveGrid(parameters; arch),
-    momentum_advection = nothing,
+    parameters = BickleyJetParameters(),
+    grid = BickleyJetGrid(parameters; arch),
+    momentum_advection = WENOVectorInvariant(vorticity_order = 9),
+    tracer_advection = WENO(order=9),
     free_surface = ExplicitFreeSurface(; gravitational_acceleration = parameters.g),
     coriolis = HydrostaticSphericalCoriolis(scheme = EnstrophyConserving(), rotation_rate = parameters.Ω),
-    tracers = nothing,
+    tracers = :c,
     buoyancy = nothing,
     Courant_number = 0.2,
     # Estimate time step from the minimum grid spacing based on the CFL condition
     Δt = Courant_number * min(minimum_xspacing(getregion(grid, 1)), 
-                              minimum_yspacing(getregion(grid, 1))) / sqrt(parameters.g * parameters.Lz),
+                              minimum_yspacing(getregion(grid, 1))) / parameters.c,
     stop_time = deg2rad(360) / abs((parameters.n * (3 + parameters.n) * parameters.ω - 2parameters.Ω) 
                                    / ((1 + parameters.n) * (2 + parameters.n))),
     Ntime = round(Int, stop_time / Δt),
@@ -28,16 +29,17 @@ function RossbyHaurwitzWaveSimulation(
     #####
 
     @info "Building model..."
-    rossby_haurwitz_wave_model = (
+    bickley_jet_model = (
         HydrostaticFreeSurfaceModel(; grid,
                                       momentum_advection,
+                                      tracer_advection,
                                       free_surface,
                                       coriolis,
                                       tracers,
                                       buoyancy))
 
     @info "Initializing model..."
-    RossbyHaurwitzWaveInitialConditions!(parameters, rossby_haurwitz_wave_model)
+    BickleyJetInitialConditions!(parameters, bickley_jet_model)
 
     #####
     ##### Simulation setup
@@ -46,7 +48,7 @@ function RossbyHaurwitzWaveSimulation(
     @info "Stop time = $(prettytime(stop_time))"
     @info "Number of time steps = $Ntime"
 
-    rossby_haurwitz_wave_simulation = Simulation(rossby_haurwitz_wave_model; Δt, stop_time, align_time_step)
+    bickley_jet_simulation = Simulation(bickley_jet_model; Δt, stop_time, align_time_step)
 
     #####
     ##### Callbacks
@@ -57,7 +59,7 @@ function RossbyHaurwitzWaveSimulation(
 
     # Print a progress message
     progress_format = Printf.Format(
-        "Iteration: %04d, time: %s, Δt: %s, max|u|: %.3f, max|v|: %.3f, max|η|: %.3f, " *
+        "Iteration: %04d, time: %s, Δt: %s, max|u|: %.3f, max|v|: %.3f, max|η|: %.3f, max|c|: %.3f, " *
         "wall time for last %03d iterations: %s, wall time: %s\n"
     )
 
@@ -69,6 +71,7 @@ function RossbyHaurwitzWaveSimulation(
                       maximum(abs, simulation.model.velocities.u),
                       maximum(abs, simulation.model.velocities.v),
                       maximum(abs, simulation.model.free_surface.η),
+                      maximum(abs, simulation.model.tracers.c),
                       progress_message_iteration_interval,
                       prettytime(1e-9 * (time_ns() - wall_time)),
                       prettytime(1e-9 * (time_ns() - start_time)))
@@ -76,7 +79,7 @@ function RossbyHaurwitzWaveSimulation(
         wall_time = time_ns()
     end
 
-    rossby_haurwitz_wave_simulation.callbacks[:progress] = Callback(
+    bickley_jet_simulation.callbacks[:progress] = Callback(
         progress_message, IterationInterval(progress_message_iteration_interval))
 
     #####
@@ -84,7 +87,7 @@ function RossbyHaurwitzWaveSimulation(
     #####
 
     @info "Building checkpointer and output writer..."
-    RossbyHaurwitzWaveOutputs!(rossby_haurwitz_wave_simulation; checkpointer_interval, output_interval)
+    BickleyJetOutputs!(bickley_jet_simulation; checkpointer_interval, output_interval)
 
-    return rossby_haurwitz_wave_simulation
+    return bickley_jet_simulation
 end

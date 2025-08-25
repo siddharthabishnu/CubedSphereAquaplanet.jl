@@ -37,7 +37,6 @@ function TracerAdvectionSimulation(
                                       tracers,
                                       buoyancy))
 
-
     @info "Initializing model..."
     TracerAdvectionInitialConditions!(parameters, tracer_advection_model)
 
