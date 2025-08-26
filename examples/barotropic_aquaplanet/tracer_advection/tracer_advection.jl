@@ -34,7 +34,7 @@ Ntime = round(Int, stop_time / Δt)
 Nframes = round(Int, stop_time / tracer_interval) # excluding the initial condition frame
 # Redefine the animation time.
 animation_time = Nframes / framerate
-checkpointer_interval_by_tracer_interval = 100
+checkpointer_interval_by_tracer_interval = 25
 checkpointer_interval = checkpointer_interval_by_tracer_interval * tracer_interval
 
 tracer_advection_simulation = TracerAdvectionSimulation(arch;
