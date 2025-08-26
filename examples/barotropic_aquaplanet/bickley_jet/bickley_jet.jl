@@ -6,7 +6,8 @@ using Printf
 
 arch = CPU()
 
-bickley_jet_parameters = BickleyJetParameters()
+unit_sphere = false
+bickley_jet_parameters = BickleyJetParameters(; unit_sphere)
 bickley_jet_grid = BickleyJetGrid(bickley_jet_parameters; arch)
 
 minimum_grid_spacing = filter(!iszero, getregion(bickley_jet_grid, 1).Δxᶠᶠᵃ) |> minimum
@@ -15,7 +16,7 @@ c = bickley_jet_parameters.c
 CourantNumber = 0.2
 Δt = CourantNumber * minimum_grid_spacing / c # CFL for Bickley jet
 
-stop_time = 15days
+stop_time = unit_sphere ? 20 : 15days
 Ntime = ceil(Int, stop_time / Δt)
 # Redefine the stop time.
 stop_time = Ntime * Δt

@@ -2,7 +2,7 @@ using Oceananigans.BuoyancyFormulations: g_Earth
 using Oceananigans.Coriolis: Ω_Earth
 using Oceananigans.Grids: R_Earth
 
-function BickleyJetParameters()
+function BickleyJetParameters(; unit_sphere::Bool = false)
     # Domain extents and resolution
     R = R_Earth  # Radius of the sphere (m)
     Lz = 1000    # Depth of the domain (m)
@@ -23,6 +23,14 @@ function BickleyJetParameters()
     b = 2        # Zonal angular scaling factor (controls number of waves in longitude)
 
     Fr_target = 0.01       # Target Froude number U / sqrt(gH), used to set velocity scale
+
+    if unit_sphere
+        R = 1
+        Lz = 1
+        g = 1
+        Ω = 1
+        Fr_target = 1
+    end
 
     # Derived dimensional quantities
     
