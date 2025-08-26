@@ -27,11 +27,10 @@ function BickleyJetVisualization!(bickley_jet_grid, Nplots, Δt, plot_iteration_
     
     for iPlot in 0:Nplots
         plot_iteration = iPlot * plot_iteration_interval + 1
-        simulation_time = (plot_iteration - 1) * Δt
-        title_η = "Surface elevation after $(prettytime(simulation_time))"
-        title_c = "Tracer concentration after $(prettytime(simulation_time))"
-        title_ζ = "Relative vorticity after $(prettytime(simulation_time))"
-        
+        title_η = "Surface elevation after $(prettytimes[plot_iteration])"
+        title_c = "Tracer concentration after $(prettytimes[plot_iteration])"
+        title_ζ = "Relative vorticity after $(prettytimes[plot_iteration])"
+
         if make_panelwise_visualization_plots_with_halos
             fig = panelwise_visualization(bickley_jet_grid, η_time_series[plot_iteration];
                                           with_halos = true, ssh = true, colorrange = colorrange_η, colormap)

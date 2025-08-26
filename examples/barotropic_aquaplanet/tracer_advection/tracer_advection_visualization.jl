@@ -19,8 +19,7 @@ function TracerAdvectionVisualization!(tracer_advection_grid, θ₀, Nplots, Δt
     
     for iPlot in 0:Nplots
         plot_iteration = iPlot * plot_iteration_interval + 1
-        simulation_time = (plot_iteration - 1) * Δt
-        title = "Tracer concentration after $(prettytime(simulation_time))"
+        title = "Tracer concentration after $(prettytimes[plot_iteration])"
 
         if make_panelwise_visualization_plots_with_halos
             fig = panelwise_visualization(tracer_advection_grid, θ_time_series[plot_iteration];
