@@ -4,6 +4,8 @@ function BickleyJetVisualization!(bickley_jet_grid, Nplots, Δt, plot_iteration_
                                   prettytimes, framerate;
                                   output_directory::String = "bickley_jet_output",
                                   output_filename::String = "bickley_jet_output.jld2",
+                                  iPlot_Start::Int = 0,
+                                  iPlot_Δ::Int = 1,
                                   make_panelwise_visualization_plots_with_halos::Bool = false,
                                   make_panelwise_visualization_plots::Bool = false,
                                   geo_heatmap_type::String = "heatlatlon",
@@ -25,7 +27,23 @@ function BickleyJetVisualization!(bickley_jet_grid, Nplots, Δt, plot_iteration_
     colorrange_ζ = specify_colorrange_time_series(bickley_jet_grid, ζ_time_series)
     colormap = :balance
     
-    for iPlot in 0:Nplots
+    η_time_seris_plots = []
+    c_time_seris_plots = []
+    ζ_time_seris_plots = []
+
+    for iPlot in iPlot_Start:iPlot_Δ:Nplots
+        plot_iteration = iPlot * plot_iteration_interval + 1
+        push!(η_time_seris_plots, deepcopy(η_time_series[plot_iteration]))
+        push!(c_time_seris_plots, deepcopy(c_time_series[plot_iteration]))
+        push!(ζ_time_seris_plots, deepcopy(ζ_time_series[plot_iteration]))
+    end
+
+    colorrange_plots_η = specify_colorrange_time_series(bickley_jet_grid, η_time_seris_plots;
+                                                        ssh = true)
+    colorrange_plots_c = specify_colorrange_time_series(bickley_jet_grid, c_time_seris_plots)
+    colorrange_plots_ζ = specify_colorrange_time_series(bickley_jet_grid, ζ_time_seris_plots)
+
+    for iPlot in iPlot_Start:Nplots
         plot_iteration = iPlot * plot_iteration_interval + 1
         title_η = "Surface elevation after $(prettytimes[plot_iteration])"
         title_c = "Tracer concentration after $(prettytimes[plot_iteration])"
@@ -33,7 +51,7 @@ function BickleyJetVisualization!(bickley_jet_grid, Nplots, Δt, plot_iteration_
 
         if make_panelwise_visualization_plots_with_halos
             fig = panelwise_visualization(bickley_jet_grid, η_time_series[plot_iteration];
-                                          with_halos = true, ssh = true, colorrange = colorrange_η, colormap)
+                                          with_halos = true, ssh = true, colorrange = colorrange_plots_η, colormap)
             filename = joinpath(
                 output_directory,
                 @sprintf("cubed_sphere_bickley_jet_panelwise_visualization_with_halos_η_%d.png", plot_iteration))
@@ -42,10 +60,10 @@ function BickleyJetVisualization!(bickley_jet_grid, Nplots, Δt, plot_iteration_
                 output_directory,
                 @sprintf("cubed_sphere_bickley_jet_panelwise_visualization_with_halos_c_%d.png", plot_iteration))
             fig = panelwise_visualization(bickley_jet_grid, c_time_series[plot_iteration];
-                                          with_halos = true, colorrange = colorrange_c, colormap)
+                                          with_halos = true, colorrange = colorrange_plots_c, colormap)
             save(filename, fig)
             fig = panelwise_visualization(bickley_jet_grid, ζ_time_series[plot_iteration];
-                                          with_halos = true, colorrange = colorrange_ζ, colormap)
+                                          with_halos = true, colorrange = colorrange_plots_ζ, colormap)
             filename = joinpath(
                 output_directory,
                 @sprintf("cubed_sphere_bickley_jet_panelwise_visualization_with_halos_ζ_%d.png", plot_iteration))
@@ -54,17 +72,17 @@ function BickleyJetVisualization!(bickley_jet_grid, Nplots, Δt, plot_iteration_
 
         if make_panelwise_visualization_plots
             fig = panelwise_visualization(bickley_jet_grid, η_time_series[plot_iteration];
-                                          ssh = true, colorrange = colorrange_η, colormap)
+                                          ssh = true, colorrange = colorrange_plots_η, colormap)
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_bickley_jet_panelwise_visualization_η_%d.png", plot_iteration))
             save(filename, fig)
             fig = panelwise_visualization(bickley_jet_grid, c_time_series[plot_iteration];
-                                          colorrange = colorrange_c, colormap)
+                                          colorrange = colorrange_plots_c, colormap)
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_bickley_jet_panelwise_visualization_c_%d.png", plot_iteration))
             save(filename, fig)
             fig = panelwise_visualization(bickley_jet_grid, ζ_time_series[plot_iteration];
-                                          colorrange = colorrange_ζ, colormap)
+                                          colorrange = colorrange_plots_ζ, colormap)
             filename = joinpath(
                 output_directory,
                 @sprintf("cubed_sphere_bickley_jet_panelwise_visualization_ζ_%d.png", plot_iteration))
@@ -73,21 +91,21 @@ function BickleyJetVisualization!(bickley_jet_grid, Nplots, Δt, plot_iteration_
 
         if make_geo_heatmap_visualization_plots
             fig = geo_heatmap_visualization(bickley_jet_grid, η_time_series[plot_iteration], "cc", title_η;
-                                            geo_heatmap_type, ssh = true, colorrange = colorrange_η,
+                                            geo_heatmap_type, ssh = true, colorrange = colorrange_plots_η,
                                             colorbarlabel = "surface elevation", colormap)
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_bickley_jet_geo_%s_visualization_η_%d.png",
                                          geo_heatmap_type, plot_iteration))
             save(filename, fig)
             fig = geo_heatmap_visualization(bickley_jet_grid, c_time_series[plot_iteration], "cc", title_c;
-                                            geo_heatmap_type, colorrange = colorrange_c,
+                                            geo_heatmap_type, colorrange = colorrange_plots_c,
                                             colorbarlabel = "tracer concentration", colormap)
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_bickley_jet_geo_%s_visualization_c_%d.png",
                                          geo_heatmap_type, plot_iteration))
             save(filename, fig)
             fig = geo_heatmap_visualization(bickley_jet_grid, ζ_time_series[plot_iteration], "cc", title_ζ;
-                                            geo_heatmap_type, colorrange = colorrange_ζ,
+                                            geo_heatmap_type, colorrange = colorrange_plots_ζ,
                                             colorbarlabel = "relative vorticity", colormap)
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_bickley_jet_geo_%s_visualization_ζ_%d.png",

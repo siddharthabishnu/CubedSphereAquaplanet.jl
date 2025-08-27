@@ -22,14 +22,16 @@ function BickleyJetInitialConditions!(bickley_jet_parameters, bickley_jet_model)
     
     dr(x) = deg2rad(x)
     
-    ϵ  = bickley_jet_parameters.ϵ
-    ℓ  = bickley_jet_parameters.ℓ
-    k  = bickley_jet_parameters.k
-    a  = bickley_jet_parameters.a
-    b  = bickley_jet_parameters.b
-    ψ₀ = bickley_jet_parameters.ψ₀
+    ϵ       = bickley_jet_parameters.ϵ
+    ℓ       = bickley_jet_parameters.ℓ
+    k       = bickley_jet_parameters.k
+    a_jet   = bickley_jet_parameters.a_jet
+    a_pert  = bickley_jet_parameters.a_pert
+    b_pert  = bickley_jet_parameters.b_pert
+    ψ₀_jet  = bickley_jet_parameters.ψ₀_jet
+    ψ₀_pert = bickley_jet_parameters.ψ₀_pert
 
-    @inline ψᵢ(λ, φ, z) = ψ₀ * (Ψ(a * dr(φ)) + ϵ * ψ̃(b * dr(λ), a * dr(φ), ℓ, k))
+    @inline ψᵢ(λ, φ, z) = ψ₀_jet * Ψ(a_jet * dr(φ)) + ϵ * ψ₀_pert * ψ̃(b_pert * dr(λ), a_pert * dr(φ), ℓ, k)
     @inline cᵢ(λ, φ, z) = C(dr(φ), π)
     
     #####

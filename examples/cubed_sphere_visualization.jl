@@ -170,6 +170,7 @@ function panelwise_visualization(grid, field;
     end
 
     resize_to_layout!(fig)
+
     return fig
 end
 
@@ -238,6 +239,7 @@ function geo_heatmap_visualization(grid, field, field_location, title;
     colgap!(fig.layout, column_gap)
 
     resize_to_layout!(fig)
+
     return fig
 end
 

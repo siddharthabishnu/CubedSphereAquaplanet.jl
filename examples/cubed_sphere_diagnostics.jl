@@ -6,7 +6,6 @@ using Oceananigans.Grids: halo_size, total_size
 using Oceananigans.MultiRegion: number_of_regions, ConformalCubedSphereGridOfSomeKind
 using Oceananigans.Operators: ζ₃ᶠᶠᶜ
 using Oceananigans.Utils
-# using Oceananigans.Utils: getregion, launch!
 
 using Oceananigans: CubedSphereField
 

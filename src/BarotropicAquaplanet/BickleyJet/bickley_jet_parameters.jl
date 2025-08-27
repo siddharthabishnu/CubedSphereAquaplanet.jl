@@ -2,12 +2,12 @@ using Oceananigans.BuoyancyFormulations: g_Earth
 using Oceananigans.Coriolis: Ω_Earth
 using Oceananigans.Grids: R_Earth
 
-function BickleyJetParameters(; unit_sphere::Bool = false)
+function BickleyJetParameters(; unit_sphere::Bool = true)
     # Domain extents and resolution
     R = R_Earth  # Radius of the sphere (m)
     Lz = 1000    # Depth of the domain (m)
-    Nx = 64      # Number of grid cells in the local x direction
-    Ny = 64      # Number of grid cells in the local y direction
+    Nx = 128     # Number of grid cells in the local x direction
+    Ny = 128     # Number of grid cells in the local y direction
     Nz = 1       # Number of grid cells in the z direction
     H = 6        # Number of halo cells in each horizontal direction
 
@@ -15,28 +15,34 @@ function BickleyJetParameters(; unit_sphere::Bool = false)
     Ω = Ω_Earth  # Earth's rotational rate (s⁻¹)
     
     # Bickley jet initial condition parameters
-    ϵ = 0.1      # Non-dimensional perturbation amplitude
+    ϵ = 0.1      # Perturbation amplitude (non-dimensional multiplier of U_ref)
     ℓ = 0.5      # Gaussian envelope width (in angular y-coordinate units)
-    k = 0.5      # Sinusoidal wavenumber (in angular x, y units)
-
-    a = 4        # Meridional angular scaling factor (controls jet width in latitude)
-    b = 2        # Zonal angular scaling factor (controls number of waves in longitude)
-
-    Fr_target = 0.01       # Target Froude number U / sqrt(gH), used to set velocity scale
+    k = 0.5      # Wavenumber used in cos(kx)cos(ky) factors (in angular units)
 
     if unit_sphere
-        R = 1
-        Lz = 1
-        g = 1
-        Ω = 1
-        Fr_target = 1
+        # Non-dimensional test case
+        R  = 1                    # Nondimensional sphere radius
+        Lz = 1                    # Nondimensional depth
+        g  = 1                    # Nondimensional gravitational acceleration
+        Ω  = 1                    # Nondimensional rotational rate
+
+        a_jet  = 1                # Jet width parameter (L = R / a_jet)
+        b_pert = 1 / k            # Sets zonal wave number: m = k * b_pert
+
+    else
+        # Earth-like dimensional case
+        a_jet  = 24               # Jet width parameter (L = R / 24 ≈ 265 km), gives β* ~ O(1)
+        b_pert = 12 / k           # Sets zonal wavenumber: m = k * b_pert = 24 (within unstable range)
     end
 
-    # Derived dimensional quantities
+    U_ref   = 1                   # Target reference velocity scale (m s⁻¹)
+
+    # Derived quantities
+    a_pert  = 4 / k               # Meridional scaling → 2 cosine periods pole-to-pole
+    c       = sqrt(g * Lz)        # Gravity-wave speed (m s⁻¹)
     
-    c = sqrt(g * Lz)       # Gravity-wave speed (m s⁻¹)
-    U_ref = Fr_target * c  # Reference velocity scale (m s⁻¹)
-    ψ₀ = U_ref * R / a     # Streamfunction amplitude (m² s⁻¹), sets peak jet speed
+    ψ₀_jet  = U_ref * R / a_jet   # Base jet streamfunction amplitude → peak jet speed ≈ U_ref
+    ψ₀_pert = U_ref * R / a_pert  # Perturbation streamfunction amplitude (scales u_pert ≈ ϵ U_ref)
 
     bickley_jet_parameters = (
         R = R,    
@@ -50,12 +56,12 @@ function BickleyJetParameters(; unit_sphere::Bool = false)
         ϵ = ϵ,
         ℓ = ℓ,
         k = k,
-        a = a,
-        b = b,
-        Fr_target = Fr_target,
+        a_jet = a_jet,
+        a_pert = a_pert,
+        b_pert = b_pert,
         c = c,
-        U_ref = U_ref,
-        ψ₀ = ψ₀
+        ψ₀_jet = ψ₀_jet,
+        ψ₀_pert = ψ₀_pert
     )
 
     return bickley_jet_parameters

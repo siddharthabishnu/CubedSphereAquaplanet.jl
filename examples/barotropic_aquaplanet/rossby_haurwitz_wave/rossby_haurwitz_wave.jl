@@ -44,6 +44,8 @@ checkpointer_interval_by_output_interval = 25
 checkpointer_interval = checkpointer_interval_by_output_interval * output_interval
 
 rossby_haurwitz_wave_simulation = RossbyHaurwitzWaveSimulation(arch;
+                                                               parameters = rossby_haurwitz_wave_parameters,
+                                                               grid = rossby_haurwitz_wave_grid,
                                                                Δt, stop_time, Ntime, checkpointer_interval,
                                                                output_interval)
 run!(rossby_haurwitz_wave_simulation)

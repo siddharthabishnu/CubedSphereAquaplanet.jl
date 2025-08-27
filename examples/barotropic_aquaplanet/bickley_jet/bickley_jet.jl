@@ -6,7 +6,7 @@ using Printf
 
 arch = CPU()
 
-unit_sphere = false
+unit_sphere = true
 bickley_jet_parameters = BickleyJetParameters(; unit_sphere)
 bickley_jet_grid = BickleyJetGrid(bickley_jet_parameters; arch)
 
@@ -16,7 +16,7 @@ c = bickley_jet_parameters.c
 CourantNumber = 0.2
 Δt = CourantNumber * minimum_grid_spacing / c # CFL for Bickley jet
 
-stop_time = unit_sphere ? 20 : 15days
+stop_time = unit_sphere ? 45 : 45days
 Ntime = ceil(Int, stop_time / Δt)
 # Redefine the stop time.
 stop_time = Ntime * Δt
@@ -39,13 +39,18 @@ checkpointer_interval_by_output_interval = 25
 checkpointer_interval = checkpointer_interval_by_output_interval * output_interval
 
 bickley_jet_simulation = BickleyJetSimulation(arch;
-                                              Δt, stop_time, Ntime, checkpointer_interval, output_interval)
+                                              parameters = bickley_jet_parameters,
+                                              grid = bickley_jet_grid,
+                                              Δt, stop_time, Ntime,
+                                              checkpointer_interval, output_interval)
 run!(bickley_jet_simulation)
 
 include("bickley_jet_visualization.jl")
-Nplots = 5
+Nplots = Nframes
 plot_iteration_interval = floor(Int, Nframes / Nplots)
 prettytimes = [prettytime((i - 1) * output_interval) for i in 1:Nframes+1]
+iPlot_Start = Nframes - 18
+iPlot_Δ = 3
 make_panelwise_visualization_plots_with_halos = false
 make_panelwise_visualization_plots = true
 geo_heatmap_type = "heatsphere"
@@ -55,6 +60,8 @@ make_panelwise_visualization_animation_with_halos = false
 make_panelwise_visualization_animation = true
 make_geo_heatmap_visualization_animation = true
 BickleyJetVisualization!(bickley_jet_grid, Nplots, Δt, plot_iteration_interval, prettytimes, framerate;
+                         iPlot_Start,
+                         iPlot_Δ,
                          make_panelwise_visualization_plots_with_halos,
                          make_panelwise_visualization_plots,
                          geo_heatmap_type,
