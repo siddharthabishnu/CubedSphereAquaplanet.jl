@@ -3,6 +3,10 @@ using Oceananigans.Coriolis: Ω_Earth
 using Oceananigans.Grids: R_Earth
 
 function RossbyHaurwitzWaveParameters()
+    non_uniform_conformal_mapping = true
+    # If true, applies a stretched conformal map (exponential or geometric spacing) to make the cubed-sphere grid more
+    # uniform. This enlarges corner cells, relaxes the CFL constraint, and permits larger time steps.
+
     # Domain extents and resolution
     R = R_Earth  # Radius of the sphere (m)
     Lz = 8000    # Depth of the domain (m)
@@ -20,6 +24,7 @@ function RossbyHaurwitzWaveParameters()
     Ω = Ω_Earth  # Earth's rotational rate (s⁻¹)
 
     rossby_haurwitz_wave_parameters = (
+        non_uniform_conformal_mapping = non_uniform_conformal_mapping,
         R = R,    
         Lz = Lz,
         Nx = Nx,

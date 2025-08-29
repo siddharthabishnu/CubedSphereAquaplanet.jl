@@ -5,6 +5,7 @@ function BickleyJetGrid(bickley_jet_parameters; arch = CPU(), FT::DataType = Oce
         z = (-bickley_jet_parameters.Lz, 0),
         radius = bickley_jet_parameters.R,
         horizontal_direction_halo = bickley_jet_parameters.H,
+        non_uniform_conformal_mapping = bickley_jet_parameters.non_uniform_conformal_mapping,
         partition = CubedSpherePartition(; R = 1))
 
     return bickley_jet_grid

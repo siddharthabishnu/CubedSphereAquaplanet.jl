@@ -5,6 +5,7 @@ function TracerAdvectionGrid(tracer_advection_parameters; arch = CPU(), FT::Data
         z = (-tracer_advection_parameters.Lz, 0),
         radius = tracer_advection_parameters.R,
         horizontal_direction_halo = tracer_advection_parameters.H,
+        non_uniform_conformal_mapping = tracer_advection_parameters.non_uniform_conformal_mapping,
         partition = CubedSpherePartition(; R = 1))
 
     return tracer_advection_grid
