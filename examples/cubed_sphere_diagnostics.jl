@@ -90,6 +90,7 @@ function interpolate_cubed_sphere_field_to_cell_centers(grid, field, field_locat
     if field_location == "cc" && !read_parent_field_data
         return field
     end
+
     Nx, Ny, Nz, hx, hy, hz, consider_all_levels, levels = compute_size_metrics(
         grid, field, ssh, consider_all_levels, levels, read_parent_field_data)
 
@@ -117,6 +118,30 @@ function interpolate_cubed_sphere_field_to_cell_centers(grid, field, field_locat
     end
 
     return interpolated_field
+end
+
+function interpolate_cubed_sphere_field_time_series_to_cell_centers(grid, field_time_series, field_location;
+                                                                    ssh::Bool = false,
+                                                                    consider_all_levels::Bool = true,
+                                                                    levels::UnitRange{Int} = 1:1,
+                                                                    read_parent_field_data::Bool = false)
+    if field_location == "cc" && !read_parent_field_data
+        return field_time_series
+    end
+
+    interpolated_field_time_series = Field[]
+
+    for i in 1:length(field_time_series)
+        field = field_time_series[i]
+        interpolated_field = interpolate_cubed_sphere_field_to_cell_centers(grid, field, field_location;
+                                                                            ssh,
+                                                                            consider_all_levels,
+                                                                            levels,
+                                                                            read_parent_field_data)
+        push!(interpolated_field_time_series, deepcopy(interpolated_field))
+    end
+
+    return interpolated_field_time_series
 end
 
 function compute_vorticity_time_series(grid, u_time_series, v_time_series;
