@@ -9,20 +9,19 @@ function BickleyJetSimulation(
     momentum_advection = WENOVectorInvariant(vorticity_order = 9),
     tracer_advection = WENO(order=9),
     free_surface = ExplicitFreeSurface(; gravitational_acceleration = parameters.g),
-    coriolis = HydrostaticSphericalCoriolis(scheme = EnstrophyConserving(), rotation_rate = parameters.Ω),
+    coriolis = HydrostaticSphericalCoriolis(rotation_rate = parameters.Ω),
     tracers = :c,
     buoyancy = nothing,
     Courant_number = 0.2,
     # Estimate time step from the minimum grid spacing based on the CFL condition
     Δt = Courant_number * min(minimum_xspacing(getregion(grid, 1)), 
                               minimum_yspacing(getregion(grid, 1))) / parameters.c,
-    stop_time = deg2rad(360) / abs((parameters.n * (3 + parameters.n) * parameters.ω - 2parameters.Ω) 
-                                   / ((1 + parameters.n) * (2 + parameters.n))),
+    stop_time = 45,
     Ntime = round(Int, stop_time / Δt),
     align_time_step = false,
     progress_message_iteration_interval = 100,
-    checkpointer_interval = round(Int, Ntime * Δt / 3),
-    output_interval = round(Int, Ntime * Δt / 75))
+    checkpointer_interval = 9,
+    output_interval = 0.6)
     
     #####
     ##### Model setup

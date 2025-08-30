@@ -18,7 +18,7 @@ function TracerAdvectionSimulation(
     Ntime = round(Int, stop_time / Δt),
     align_time_step = false,
     progress_message_iteration_interval = 100,
-    checkpointer_interval = round(Int, Ntime * Δt / 3),
+    checkpointer_interval = round(Int, Ntime * Δt / 5),
     tracer_interval = round(Int, Ntime * Δt / 75))
     
     #####

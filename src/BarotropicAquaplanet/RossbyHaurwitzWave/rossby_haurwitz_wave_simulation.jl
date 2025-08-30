@@ -8,7 +8,7 @@ function RossbyHaurwitzWaveSimulation(
     grid = RossbyHaurwitzWaveGrid(parameters; arch),
     momentum_advection = nothing,
     free_surface = ExplicitFreeSurface(; gravitational_acceleration = parameters.g),
-    coriolis = HydrostaticSphericalCoriolis(scheme = EnstrophyConserving(), rotation_rate = parameters.Ω),
+    coriolis = HydrostaticSphericalCoriolis(rotation_rate = parameters.Ω),
     tracers = nothing,
     buoyancy = nothing,
     Courant_number = 0.2,
@@ -20,7 +20,7 @@ function RossbyHaurwitzWaveSimulation(
     Ntime = round(Int, stop_time / Δt),
     align_time_step = false,
     progress_message_iteration_interval = 100,
-    checkpointer_interval = round(Int, Ntime * Δt / 3),
+    checkpointer_interval = round(Int, Ntime * Δt / 5),
     output_interval = round(Int, Ntime * Δt / 75))
     
     #####

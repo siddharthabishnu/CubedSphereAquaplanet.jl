@@ -35,14 +35,17 @@ Ntime = round(Int, stop_time / Δt)
 Nframes = round(Int, stop_time / output_interval) # excluding the initial condition frame
 # Redefine the animation time.
 animation_time = Nframes / framerate
-checkpointer_interval_by_output_interval = 25
+checkpointer_interval_by_output_interval = 15
 checkpointer_interval = checkpointer_interval_by_output_interval * output_interval
 
 bickley_jet_simulation = BickleyJetSimulation(arch;
                                               parameters = bickley_jet_parameters,
                                               grid = bickley_jet_grid,
-                                              Δt, stop_time, Ntime,
-                                              checkpointer_interval, output_interval)
+                                              Δt,
+                                              stop_time,
+                                              Ntime,
+                                              checkpointer_interval,
+                                              output_interval)
 run!(bickley_jet_simulation)
 
 include("bickley_jet_visualization.jl")

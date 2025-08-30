@@ -43,7 +43,7 @@ function BickleyJetParameters(; unit_sphere::Bool = true)
 
     # Derived quantities
     a_pert  = 4 / k               # Meridional scaling → 2 cosine periods pole-to-pole
-    c       = sqrt(g * Lz)        # Gravity-wave speed (m s⁻¹)
+    c       = sqrt(g * Lz)        # Gravity wave speed (m s⁻¹)
     
     ψ₀_jet  = U_ref * R / a_jet   # Base jet streamfunction amplitude → peak jet speed ≈ U_ref
     ψ₀_pert = U_ref * R / a_pert  # Perturbation streamfunction amplitude (scales u_pert ≈ ϵ U_ref)
