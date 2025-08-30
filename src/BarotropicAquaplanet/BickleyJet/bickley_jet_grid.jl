@@ -1,4 +1,10 @@
 function BickleyJetGrid(bickley_jet_parameters; arch = CPU(), FT::DataType = Oceananigans.defaults.FloatType)
+    #####
+    ##### Grid generation
+    #####
+
+    @info "Generating grid..."
+
     bickley_jet_grid = ConformalCubedSphereGrid(
         arch, FT;
         panel_size = (bickley_jet_parameters.Nx, bickley_jet_parameters.Ny, bickley_jet_parameters.Nz),

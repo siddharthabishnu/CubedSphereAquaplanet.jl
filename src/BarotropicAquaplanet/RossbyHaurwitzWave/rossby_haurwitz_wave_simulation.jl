@@ -22,7 +22,6 @@ function RossbyHaurwitzWaveSimulation(
     progress_message_iteration_interval = 100,
     checkpointer_interval = round(Int, Ntime * Δt / 5),
     output_interval = round(Int, Ntime * Δt / 75))
-    
     #####
     ##### Model setup
     #####

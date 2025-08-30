@@ -22,7 +22,6 @@ function BickleyJetSimulation(
     progress_message_iteration_interval = 100,
     checkpointer_interval = 9,
     output_interval = 0.6)
-    
     #####
     ##### Model setup
     #####

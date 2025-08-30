@@ -1,5 +1,11 @@
 function RossbyHaurwitzWaveGrid(rossby_haurwitz_wave_parameters;
                                 arch = CPU(), FT::DataType = Oceananigans.defaults.FloatType)
+    #####
+    ##### Grid generation
+    #####
+
+    @info "Generating grid..."
+
     rossby_haurwitz_wave_grid = ConformalCubedSphereGrid(
         arch, FT;
         panel_size = (rossby_haurwitz_wave_parameters.Nx, rossby_haurwitz_wave_parameters.Ny,

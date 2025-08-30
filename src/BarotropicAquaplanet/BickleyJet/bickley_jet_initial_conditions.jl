@@ -80,14 +80,6 @@ function BickleyJetInitialConditions!(bickley_jet_parameters, bickley_jet_model)
                               bickley_jet_model.velocities.u, bickley_jet_model.velocities.v)
     fill_halo_regions!((bickley_jet_model.velocities.u, bickley_jet_model.velocities.v))
 
-    @kernel function _set_initial_tracer_distribution!(c, grid)
-        i, j, k = @index(Global, NTuple)
-        λ, φ, z = node(i, j, k, grid, Center(), Center(), Center())
-        @inbounds c[i, j, k] = cᵢ(λ, φ, z)
-    end
-
-    @apply_regionally launch!(bickley_jet_model.architecture, bickley_jet_grid, (Nx, Ny, Nz),
-                              _set_initial_tracer_distribution!, bickley_jet_model.tracers.c, bickley_jet_grid)
-
+    set!(bickley_jet_model.tracers.c, cᵢ)
     fill_halo_regions!(bickley_jet_model.tracers.c)
 end

@@ -20,7 +20,6 @@ function TracerAdvectionSimulation(
     progress_message_iteration_interval = 100,
     checkpointer_interval = round(Int, Ntime * Δt / 5),
     tracer_interval = round(Int, Ntime * Δt / 75))
-    
     #####
     ##### Model setup
     #####
