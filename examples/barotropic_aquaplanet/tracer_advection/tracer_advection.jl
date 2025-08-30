@@ -9,10 +9,10 @@ arch = CPU()
 tracer_advection_parameters = TracerAdvectionParameters()
 tracer_advection_grid = TracerAdvectionGrid(tracer_advection_parameters; arch)
 
-# Estimate time step from the minimum grid spacing based on the CFL condition.
-Δx = minimum_xspacing(getregion(tracer_advection_grid, 1))
-Δy = minimum_yspacing(getregion(tracer_advection_grid, 1))
+# Estimate time step via the CFL condition using the Courant number, minimum grid spacing, and tracer advection speed.
 CourantNumber = 0.2
+Δx = minimum_xspacing(tracer_advection_grid, Face(), Face(), Center())
+Δy = minimum_yspacing(tracer_advection_grid, Face(), Face(), Center())
 Δt = CourantNumber * min(Δx, Δy) / tracer_advection_parameters.U # CFL for tracer advection
 
 stop_time = 2π * tracer_advection_parameters.R / tracer_advection_parameters.U

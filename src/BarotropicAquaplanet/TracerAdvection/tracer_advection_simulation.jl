@@ -12,8 +12,9 @@ function TracerAdvectionSimulation(
     buoyancy = nothing,
     Courant_number = 0.2,
     # Estimate time step from the minimum grid spacing based on the CFL condition
-    Δt = Courant_number * min(minimum_xspacing(getregion(grid, 1)), 
-                              minimum_yspacing(getregion(grid, 1))) / parameters.U, # CFL for tracer advection
+    Δt = Courant_number * min(minimum_xspacing(grid, Face(), Face(), Center()),
+                              minimum_yspacing(grid, Face(), Face(), Center())) / parameters.U,
+    # CFL for tracer advection
     stop_time = 2π * parameters.R / parameters.U,
     Ntime = round(Int, stop_time / Δt),
     align_time_step = false,

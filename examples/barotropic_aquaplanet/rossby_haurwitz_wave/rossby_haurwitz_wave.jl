@@ -16,11 +16,12 @@ n = rossby_haurwitz_wave_parameters.n
 angular_velocity = (n * (3 + n) * ω - 2Ω) / ((1 + n) * (2 + n))
 stop_time = deg2rad(360) / abs(angular_velocity)
 
-minimum_grid_spacing = filter(!iszero, getregion(rossby_haurwitz_wave_grid, 1).Δxᶠᶠᵃ) |> minimum
-c = sqrt(rossby_haurwitz_wave_parameters.g * rossby_haurwitz_wave_parameters.Lz)
-
+# Estimate time step via the CFL condition using the Courant number, minimum grid spacing, and gravity wave speed.
 CourantNumber = 0.2
-Δt = CourantNumber * minimum_grid_spacing / c # CFL for Rossby-Haurwitz wave
+Δx = minimum_xspacing(rossby_haurwitz_wave_grid, Face(), Face(), Center())
+Δy = minimum_yspacing(rossby_haurwitz_wave_grid, Face(), Face(), Center())
+c = sqrt(rossby_haurwitz_wave_parameters.g * rossby_haurwitz_wave_parameters.Lz)
+Δt = CourantNumber * min(Δx, Δy) / c
 
 Ntime = ceil(Int, stop_time / Δt)
 # Redefine the stop time.

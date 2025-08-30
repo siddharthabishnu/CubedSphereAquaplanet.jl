@@ -10,11 +10,12 @@ unit_sphere = true
 bickley_jet_parameters = BickleyJetParameters(; unit_sphere)
 bickley_jet_grid = BickleyJetGrid(bickley_jet_parameters; arch)
 
-minimum_grid_spacing = filter(!iszero, getregion(bickley_jet_grid, 1).Δxᶠᶠᵃ) |> minimum
-c = bickley_jet_parameters.c
-
+# Estimate time step via the CFL condition using the Courant number, minimum grid spacing, and gravity wave speed.
 CourantNumber = 0.2
-Δt = CourantNumber * minimum_grid_spacing / c # CFL for Bickley jet
+Δx = minimum_xspacing(bickley_jet_grid, Face(), Face(), Center())
+Δy = minimum_yspacing(bickley_jet_grid, Face(), Face(), Center())
+c = bickley_jet_parameters.c
+Δt = CourantNumber * min(Δx, Δy) / c
 
 stop_time = unit_sphere ? 45 : 45days
 Ntime = ceil(Int, stop_time / Δt)

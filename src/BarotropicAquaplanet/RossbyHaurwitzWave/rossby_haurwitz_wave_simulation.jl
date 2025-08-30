@@ -13,9 +13,9 @@ function RossbyHaurwitzWaveSimulation(
     buoyancy = nothing,
     Courant_number = 0.2,
     # Estimate time step from the minimum grid spacing based on the CFL condition
-    Δt = Courant_number * min(minimum_xspacing(getregion(grid, 1)), 
-                              minimum_yspacing(getregion(grid, 1))) / sqrt(parameters.g * parameters.Lz),
-    stop_time = deg2rad(360) / abs((parameters.n * (3 + parameters.n) * parameters.ω - 2parameters.Ω) 
+    Δt = Courant_number * min(minimum_xspacing(grid, Face(), Face(), Center()),
+                              minimum_yspacing(grid, Face(), Face(), Center())) / sqrt(parameters.g * parameters.Lz),
+    stop_time = deg2rad(360) / abs((parameters.n * (3 + parameters.n) * parameters.ω - 2parameters.Ω)
                                    / ((1 + parameters.n) * (2 + parameters.n))),
     Ntime = round(Int, stop_time / Δt),
     align_time_step = false,
