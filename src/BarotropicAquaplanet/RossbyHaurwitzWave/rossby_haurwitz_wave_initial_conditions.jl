@@ -44,7 +44,7 @@ function RossbyHaurwitzWaveInitialConditions!(rossby_haurwitz_wave_parameters, r
     @inline u₀(λ, ϕ, z) = u_function(rescale²(ϕ), rescale¹(λ))
     @inline v₀(λ, ϕ, z) = v_function(rescale²(ϕ), rescale¹(λ))
     =#
-    @inline η₀(λ, ϕ)    = h_function(rescale²(ϕ), rescale¹(λ))
+    @inline η₀(λ, ϕ, z) = h_function(rescale²(ϕ), rescale¹(λ)) - Lz
     #=
     set!(rossby_haurwitz_wave_model, u=u₀, v=v₀, η = η₀)
     =#
@@ -97,14 +97,6 @@ function RossbyHaurwitzWaveInitialConditions!(rossby_haurwitz_wave_parameters, r
                               rossby_haurwitz_wave_model.velocities.u, rossby_haurwitz_wave_model.velocities.v)
     fill_halo_regions!((rossby_haurwitz_wave_model.velocities.u, rossby_haurwitz_wave_model.velocities.v))
 
-    @kernel function _set_initial_surface_elevation!(η, grid)
-        k = grid.Nz+1
-        i, j = @index(Global, NTuple)
-        λ, φ, z = node(i, j, k, grid, Center(), Center(), Face())
-        @inbounds η[i, j, k] = η₀(λ, φ) - Lz
-    end
-
-    @apply_regionally launch!(arch, rossby_haurwitz_wave_grid, (Nx, Ny), _set_initial_surface_elevation!,
-                              rossby_haurwitz_wave_model.free_surface.η, rossby_haurwitz_wave_grid)
+    set!(rossby_haurwitz_wave_model.free_surface.η, η₀)
     fill_halo_regions!(rossby_haurwitz_wave_model.free_surface.η)
 end
