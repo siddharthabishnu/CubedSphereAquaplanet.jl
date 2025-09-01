@@ -6,8 +6,8 @@ using Oceananigans.Utils: getregion
 function BaroclinicWaveSimulation(arch;
                                   parameters = BaroclinicWaveParameters(),
                                   grid = BaroclinicWaveGrid(parameters; arch),
-                                  momentum_advection = WENOVectorInvariant(vorticity_order = 9),
-                                  tracer_advection = WENO(order = 9),
+                                  momentum_advection = WENOVectorInvariant(),
+                                  tracer_advection = WENO(order = 7),
                                   substeps = 50,
                                   free_surface = SplitExplicitFreeSurface(grid;
                                                                           substeps,
