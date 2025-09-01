@@ -55,4 +55,5 @@ function TracerAdvectionInitialConditions!(tracer_advection_parameters, tracer_a
 
     @info "Setting initial condition..."
     set!(tracer_advection_model.tracers.θ, θᵢ)
+    fill_halo_regions!(tracer_advection_model.tracers.θ)
 end
