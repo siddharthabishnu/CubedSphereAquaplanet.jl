@@ -7,9 +7,13 @@ function BaroclinicWaveInitialConditions!(baroclinic_wave_parameters, baroclinic
     arch = baroclinic_wave_grid.architecture
     Nx, Ny, Nz = size(baroclinic_wave_grid)
     
-    @inline Tᵢ(λ, φ, z) = 30 * (1 - tanh((abs(φ) - 45) / 8)) / 2 + rand()
-    @inline Sᵢ(λ, φ, z) = 28 - 5e-3 * z + rand()
-    
+    @inline Tᵢ(λ, φ, z) =
+        baroclinic_wave_parameters.T0 * (1 - tanh((abs(φ) - baroclinic_wave_parameters.φ0)
+                                                  / baroclinic_wave_parameters.Δφ)) / 2
+        + baroclinic_wave_parameters.ϵT * randn()
+    @inline Sᵢ(λ, φ, z) =
+        baroclinic_wave_parameters.S0 - baroclinic_wave_parameters.γS * z + baroclinic_wave_parameters.ϵS * randn()
+
     #####
     ##### Initial condition
     #####

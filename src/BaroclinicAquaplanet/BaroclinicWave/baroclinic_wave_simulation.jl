@@ -7,12 +7,14 @@ function BaroclinicWaveSimulation(arch;
                                   parameters = BaroclinicWaveParameters(),
                                   grid = BaroclinicWaveGrid(parameters; arch),
                                   momentum_advection = WENOVectorInvariant(vorticity_order = 9),
-                                  tracer_advection = WENO(order=9),
+                                  tracer_advection = WENO(order = 9),
                                   substeps = 50,
                                   free_surface = SplitExplicitFreeSurface(grid;
                                                                           substeps,
                                                                           gravitational_acceleration = parameters.g),
                                   coriolis = HydrostaticSphericalCoriolis(rotation_rate = parameters.Ω),
+                                  boundary_conditions = BaroclinicWaveBoundaryConditions(parameters),
+                                  closure = BaroclinicWaveClosure(),
                                   tracers = (:T, :S),
                                   buoyancy = SeawaterBuoyancy(equation_of_state = TEOS10EquationOfState()),
                                   Δt = 5minutes,
@@ -33,6 +35,8 @@ function BaroclinicWaveSimulation(arch;
                                       tracer_advection,
                                       free_surface,
                                       coriolis,
+                                      boundary_conditions,
+                                      closure,
                                       tracers,
                                       buoyancy))
 
