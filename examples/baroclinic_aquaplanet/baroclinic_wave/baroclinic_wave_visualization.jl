@@ -90,7 +90,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
         title_S = "Salinity profile after $(prettytimes[plot_iteration])"
         title_ζ = "Relative vorticity after $(prettytimes[plot_iteration])"
 
-        if make_panelwise_visualization_plots_with_halos and plot_states[:u]
+        if make_panelwise_visualization_plots_with_halos && plot_states[:u]
             filename = joinpath(
                 output_directory,
                 @sprintf("cubed_sphere_baroclinic_wave_panelwise_visualization_with_halos_u_%d.png", plot_iteration))
@@ -98,7 +98,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                           with_halos = true, k = Nz, colorrange = colorrange_plots_u, colormap)
             save(filename, fig)
         end
-        if make_panelwise_visualization_plots_with_halos and plot_states[:v]
+        if make_panelwise_visualization_plots_with_halos && plot_states[:v]
             filename = joinpath(
                 output_directory,
                 @sprintf("cubed_sphere_baroclinic_wave_panelwise_visualization_with_halos_v_%d.png", plot_iteration))
@@ -106,7 +106,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                           with_halos = true, k = Nz, colorrange = colorrange_plots_v, colormap)
             save(filename, fig)
         end
-        if make_panelwise_visualization_plots_with_halos and plot_states[:w]
+        if make_panelwise_visualization_plots_with_halos && plot_states[:w]
             filename = joinpath(
                 output_directory,
                 @sprintf("cubed_sphere_baroclinic_wave_panelwise_visualization_with_halos_w_%d.png", plot_iteration))
@@ -114,7 +114,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                           with_halos = true, k = Nz + 1, colorrange = colorrange_plots_w, colormap)
             save(filename, fig)
         end
-        if make_panelwise_visualization_plots_with_halos and plot_states[:η]
+        if make_panelwise_visualization_plots_with_halos && plot_states[:η]
             filename = joinpath(
                 output_directory,
                 @sprintf("cubed_sphere_baroclinic_wave_panelwise_visualization_with_halos_η_%d.png", plot_iteration))
@@ -123,7 +123,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                           colormap)
             save(filename, fig)
         end
-        if make_panelwise_visualization_plots_with_halos and plot_states[:T]
+        if make_panelwise_visualization_plots_with_halos && plot_states[:T]
             filename = joinpath(
                 output_directory,
                 @sprintf("cubed_sphere_baroclinic_wave_panelwise_visualization_with_halos_T_%d.png", plot_iteration))
@@ -131,7 +131,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                           with_halos = true, k = Nz, colorrange = colorrange_plots_T, colormap)
             save(filename, fig)
         end
-        if make_panelwise_visualization_plots_with_halos and plot_states[:S]
+        if make_panelwise_visualization_plots_with_halos && plot_states[:S]
             filename = joinpath(
                 output_directory,
                 @sprintf("cubed_sphere_baroclinic_wave_panelwise_visualization_with_halos_S_%d.png", plot_iteration))
@@ -139,7 +139,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                           with_halos = true, k = Nz, colorrange = colorrange_plots_S, colormap)
             save(filename, fig)
         end
-        if make_panelwise_visualization_plots_with_halos and plot_states[:ζ]
+        if make_panelwise_visualization_plots_with_halos && plot_states[:ζ]
             filename = joinpath(
                 output_directory,
                 @sprintf("cubed_sphere_baroclinic_wave_panelwise_visualization_with_halos_ζ_%d.png", plot_iteration))
@@ -148,7 +148,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
             save(filename, fig)
         end
         
-        if make_panelwise_visualization_plots and plot_states[:u]
+        if make_panelwise_visualization_plots && plot_states[:u]
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_baroclinic_wave_panelwise_visualization_u_%d.png",
                                          plot_iteration))
@@ -156,7 +156,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                           k = Nz, colorrange = colorrange_plots_u, colormap)
             save(filename, fig)
         end
-        if make_panelwise_visualization_plots and plot_states[:v]
+        if make_panelwise_visualization_plots && plot_states[:v]
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_baroclinic_wave_panelwise_visualization_v_%d.png",
                                          plot_iteration))
@@ -164,7 +164,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                           k = Nz, colorrange = colorrange_plots_v, colormap)
             save(filename, fig)
         end
-        if make_panelwise_visualization_plots and plot_states[:w]
+        if make_panelwise_visualization_plots && plot_states[:w]
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_baroclinic_wave_panelwise_visualization_w_%d.png",
                                          plot_iteration))
@@ -172,7 +172,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                           k = Nz + 1, colorrange = colorrange_plots_w, colormap)
             save(filename, fig)
         end
-        if make_panelwise_visualization_plots and plot_states[:η]
+        if make_panelwise_visualization_plots && plot_states[:η]
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_baroclinic_wave_panelwise_visualization_η_%d.png",
                                          plot_iteration))
@@ -180,7 +180,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                           k = Nz + 1, ssh = true, colorrange = colorrange_plots_η, colormap)
             save(filename, fig)
         end
-        if make_panelwise_visualization_plots and plot_states[:T]
+        if make_panelwise_visualization_plots && plot_states[:T]
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_baroclinic_wave_panelwise_visualization_T_%d.png",
                                          plot_iteration))
@@ -188,7 +188,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                           k = Nz, colorrange = colorrange_plots_T, colormap)
             save(filename, fig)
         end
-        if make_panelwise_visualization_plots and plot_states[:S]
+        if make_panelwise_visualization_plots && plot_states[:S]
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_baroclinic_wave_panelwise_visualization_S_%d.png",
                                          plot_iteration))
@@ -196,7 +196,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                           k = Nz, colorrange = colorrange_plots_S, colormap)
             save(filename, fig)
         end
-        if make_panelwise_visualization_plots and plot_states[:ζ]
+        if make_panelwise_visualization_plots && plot_states[:ζ]
             filename = joinpath(
                 output_directory,
                 @sprintf("cubed_sphere_baroclinic_wave_panelwise_visualization_ζ_%d.png", plot_iteration))
@@ -205,7 +205,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
             save(filename, fig)
         end
         
-        if make_geo_heatmap_visualization_plots and plot_states[:u]
+        if make_geo_heatmap_visualization_plots && plot_states[:u]
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_baroclinic_wave_geo_%s_visualization_u_%d.png",
                                          geo_heatmap_type, plot_iteration))
@@ -214,7 +214,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                             colorbarlabel = "zonal velocity", colormap)
             save(filename, fig)
         end
-        if make_geo_heatmap_visualization_plots and plot_states[:v]
+        if make_geo_heatmap_visualization_plots && plot_states[:v]
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_baroclinic_wave_geo_%s_visualization_v_%d.png",
                                          geo_heatmap_type, plot_iteration))
@@ -223,7 +223,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                             colorbarlabel = "meridional velocity", colormap)
             save(filename, fig)
         end
-        if make_geo_heatmap_visualization_plots and plot_states[:w]
+        if make_geo_heatmap_visualization_plots && plot_states[:w]
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_baroclinic_wave_geo_%s_visualization_w_%d.png",
                                          geo_heatmap_type, plot_iteration))
@@ -232,7 +232,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                             colorbarlabel = "vertical velocity", colormap)
             save(filename, fig)
         end
-        if make_geo_heatmap_visualization_plots and plot_states[:η]
+        if make_geo_heatmap_visualization_plots && plot_states[:η]
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_baroclinic_wave_geo_%s_visualization_η_%d.png",
                                          geo_heatmap_type, plot_iteration))
@@ -241,7 +241,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                             colorbarlabel = "surface elevation", colormap)
             save(filename, fig)
         end
-        if make_geo_heatmap_visualization_plots and plot_states[:T]
+        if make_geo_heatmap_visualization_plots && plot_states[:T]
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_baroclinic_wave_geo_%s_visualization_T_%d.png",
                                          geo_heatmap_type, plot_iteration))
@@ -250,7 +250,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                             colorbarlabel = "temperature", colormap)
             save(filename, fig)
         end
-        if make_geo_heatmap_visualization_plots and plot_states[:S]
+        if make_geo_heatmap_visualization_plots && plot_states[:S]
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_baroclinic_wave_geo_%s_visualization_S_%d.png",
                                          geo_heatmap_type, plot_iteration))
@@ -259,7 +259,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
                                             colorbarlabel = "salinity", colormap)
             save(filename, fig)
         end
-        if make_geo_heatmap_visualization_plots and plot_states[:ζ]
+        if make_geo_heatmap_visualization_plots && plot_states[:ζ]
             filename = joinpath(output_directory,
                                 @sprintf("cubed_sphere_baroclinic_wave_geo_%s_visualization_ζ_%d.png",
                                          geo_heatmap_type, plot_iteration))
@@ -270,134 +270,134 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
         end
     end
     
-    if make_panelwise_visualization_animation_with_halos and plot_states[:u]
+    if make_panelwise_visualization_animation_with_halos && plot_states[:u]
         filename = "cubed_sphere_baroclinic_wave_panelwise_visualization_with_halos_u"
         panelwise_visualization_animation(baroclinic_wave_grid, u_time_series;
                                           plot_frames, with_halos = true, k = Nz, colorrange = colorrange_u, colormap,
                                           framerate, output_directory, filename)
     end
-    if make_panelwise_visualization_animation_with_halos and plot_states[:v]
+    if make_panelwise_visualization_animation_with_halos && plot_states[:v]
         filename = "cubed_sphere_baroclinic_wave_panelwise_visualization_with_halos_v"
         panelwise_visualization_animation(baroclinic_wave_grid, v_time_series;
                                           plot_frames, with_halos = true, k = Nz, colorrange = colorrange_v, colormap,
                                           framerate, output_directory, filename)
     end
-    if make_panelwise_visualization_animation_with_halos and plot_states[:w]
+    if make_panelwise_visualization_animation_with_halos && plot_states[:w]
         filename = "cubed_sphere_baroclinic_wave_panelwise_visualization_with_halos_w"
         panelwise_visualization_animation(baroclinic_wave_grid, w_time_series;
                                           plot_frames, with_halos = true, k = Nz + 1, colorrange = colorrange_w,
                                           colormap, framerate, output_directory, filename)
     end
-    if make_panelwise_visualization_animation_with_halos and plot_states[:η]
+    if make_panelwise_visualization_animation_with_halos && plot_states[:η]
         filename = "cubed_sphere_baroclinic_wave_panelwise_visualization_with_halos_η"
         panelwise_visualization_animation(baroclinic_wave_grid, η_time_series;
                                           plot_frames, with_halos = true, ssh = true, colorrange = colorrange_η,
                                           colormap, framerate, output_directory, filename)
     end
-    if make_panelwise_visualization_animation_with_halos and plot_states[:T]
+    if make_panelwise_visualization_animation_with_halos && plot_states[:T]
         filename = "cubed_sphere_baroclinic_wave_panelwise_visualization_with_halos_T"
         panelwise_visualization_animation(baroclinic_wave_grid, T_time_series;
                                           plot_frames, with_halos = true, k = Nz, colorrange = colorrange_T, colormap,
                                           framerate, output_directory, filename)
     end
-    if make_panelwise_visualization_animation_with_halos and plot_states[:S]
+    if make_panelwise_visualization_animation_with_halos && plot_states[:S]
         filename = "cubed_sphere_baroclinic_wave_panelwise_visualization_with_halos_S"
         panelwise_visualization_animation(baroclinic_wave_grid, S_time_series;
                                           plot_frames, with_halos = true, k = Nz, colorrange = colorrange_S, colormap,
                                           framerate, output_directory, filename)
     end
-    if make_panelwise_visualization_animation_with_halos and plot_states[:ζ]
+    if make_panelwise_visualization_animation_with_halos && plot_states[:ζ]
         filename = "cubed_sphere_baroclinic_wave_panelwise_visualization_with_halos_ζ"
         panelwise_visualization_animation(baroclinic_wave_grid, ζ_time_series;
                                           plot_frames, with_halos = true, k = Nz, colorrange = colorrange_ζ, colormap,
                                           framerate, output_directory, filename)
     end
     
-    if make_panelwise_visualization_animation and plot_states[:u]
+    if make_panelwise_visualization_animation && plot_states[:u]
         filename = "cubed_sphere_baroclinic_wave_panelwise_visualization_u"
         panelwise_visualization_animation(baroclinic_wave_grid, u_time_series;
                                           plot_frames, k = Nz, colorrange = colorrange_u, colormap, framerate,
                                           output_directory, filename)
     end
-    if make_panelwise_visualization_animation and plot_states[:v]
+    if make_panelwise_visualization_animation && plot_states[:v]
         filename = "cubed_sphere_baroclinic_wave_panelwise_visualization_v"
         panelwise_visualization_animation(baroclinic_wave_grid, v_time_series;
                                           plot_frames, k = Nz, colorrange = colorrange_v, colormap, framerate,
                                           output_directory, filename)
     end
-    if make_panelwise_visualization_animation and plot_states[:w]
+    if make_panelwise_visualization_animation && plot_states[:w]
         filename = "cubed_sphere_baroclinic_wave_panelwise_visualization_w"
         panelwise_visualization_animation(baroclinic_wave_grid, w_time_series;
                                           plot_frames, k = Nz + 1, colorrange = colorrange_w, colormap, framerate,
                                           output_directory, filename)
     end
-    if make_panelwise_visualization_animation and plot_states[:η]
+    if make_panelwise_visualization_animation && plot_states[:η]
         filename = "cubed_sphere_baroclinic_wave_panelwise_visualization_η"
         panelwise_visualization_animation(baroclinic_wave_grid, η_time_series;
                                           plot_frames, ssh = true, colorrange = colorrange_η, colormap, framerate,
                                           output_directory, filename)
     end
-    if make_panelwise_visualization_animation and plot_states[:T]
+    if make_panelwise_visualization_animation && plot_states[:T]
         filename = "cubed_sphere_baroclinic_wave_panelwise_visualization_T"
         panelwise_visualization_animation(baroclinic_wave_grid, T_time_series;
                                           plot_frames, k = Nz, colorrange = colorrange_T, colormap, framerate,
                                           output_directory, filename)
     end
-    if make_panelwise_visualization_animation and plot_states[:S]
+    if make_panelwise_visualization_animation && plot_states[:S]
         filename = "cubed_sphere_baroclinic_wave_panelwise_visualization_S"
         panelwise_visualization_animation(baroclinic_wave_grid, S_time_series;
                                           plot_frames, k = Nz, colorrange = colorrange_S, colormap, framerate,
                                           output_directory, filename)
     end
-    if make_panelwise_visualization_animation and plot_states[:ζ]
+    if make_panelwise_visualization_animation && plot_states[:ζ]
         filename = "cubed_sphere_baroclinic_wave_panelwise_visualization_ζ"
         panelwise_visualization_animation(baroclinic_wave_grid, ζ_time_series;
                                           plot_frames, k = Nz, colorrange = colorrange_ζ, colormap, framerate,
                                           output_directory, filename)
     end
 
-    if make_geo_heatmap_visualization_animation and plot_states[:u]
+    if make_geo_heatmap_visualization_animation && plot_states[:u]
         filename = @sprintf("cubed_sphere_baroclinic_wave_geo_%s_visualization_u", geo_heatmap_type)
         geo_heatmap_visualization_animation(baroclinic_wave_grid, u_time_series, "cc", prettytimes, "Zonal velocity";
                                             plot_frames, geo_heatmap_type, k = Nz, colorrange = colorrange_u,
                                             colormap, framerate, output_directory, filename)
     end
-    if make_geo_heatmap_visualization_animation and plot_states[:v]
+    if make_geo_heatmap_visualization_animation && plot_states[:v]
         filename = @sprintf("cubed_sphere_baroclinic_wave_geo_%s_visualization_v", geo_heatmap_type)
         geo_heatmap_visualization_animation(baroclinic_wave_grid, v_time_series, "cc", prettytimes,
                                             "Meridional velocity";
                                             plot_frames, geo_heatmap_type, k = Nz, colorrange = colorrange_v,
                                             colormap, framerate, output_directory, filename)
     end
-    if make_geo_heatmap_visualization_animation and plot_states[:w]
+    if make_geo_heatmap_visualization_animation && plot_states[:w]
         filename = @sprintf("cubed_sphere_baroclinic_wave_geo_%s_visualization_w", geo_heatmap_type)
         geo_heatmap_visualization_animation(baroclinic_wave_grid, w_time_series, "cc", prettytimes,
                                             "Vertical velocity";
                                             plot_frames, geo_heatmap_type, k = Nz + 1, colorrange = colorrange_w,
                                             colormap, framerate, output_directory, filename)
     end
-    if make_geo_heatmap_visualization_animation and plot_states[:η]
+    if make_geo_heatmap_visualization_animation && plot_states[:η]
         filename = @sprintf("cubed_sphere_baroclinic_wave_geo_%s_visualization_η", geo_heatmap_type)
         geo_heatmap_visualization_animation(baroclinic_wave_grid, η_time_series, "cc", prettytimes,
                                             "Surface elevation";
                                             plot_frames, geo_heatmap_type, ssh = true, colorrange = colorrange_η,
                                             colormap, framerate, output_directory, filename)
     end
-    if make_geo_heatmap_visualization_animation and plot_states[:T]
+    if make_geo_heatmap_visualization_animation && plot_states[:T]
         filename = @sprintf("cubed_sphere_baroclinic_wave_geo_%s_visualization_T", geo_heatmap_type)
         geo_heatmap_visualization_animation(baroclinic_wave_grid, T_time_series, "cc", prettytimes,
                                             "Temperature profile";
                                             plot_frames, geo_heatmap_type, k = Nz, colorrange = colorrange_T,
                                             colormap, framerate, output_directory, filename)
     end
-    if make_geo_heatmap_visualization_animation and plot_states[:S]
+    if make_geo_heatmap_visualization_animation && plot_states[:S]
         filename = @sprintf("cubed_sphere_baroclinic_wave_geo_%s_visualization_S", geo_heatmap_type)
         geo_heatmap_visualization_animation(baroclinic_wave_grid, S_time_series, "cc", prettytimes,
                                             "Salinity profile";
                                             plot_frames, geo_heatmap_type, k = Nz, colorrange = colorrange_S,
                                             colormap, framerate, output_directory, filename)
     end
-    if make_geo_heatmap_visualization_animation and plot_states[:ζ]
+    if make_geo_heatmap_visualization_animation && plot_states[:ζ]
         filename = @sprintf("cubed_sphere_baroclinic_wave_geo_%s_visualization_ζ", geo_heatmap_type)
         geo_heatmap_visualization_animation(baroclinic_wave_grid, ζ_time_series, "cc", prettytimes,
                                             "Relative vorticity";
