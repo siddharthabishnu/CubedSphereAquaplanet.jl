@@ -1,5 +1,5 @@
-using CubedSphere: spherical_area_triangle
-using Oceananigans.Grids: size, lat_lon_to_cartesian
+using CubedSphere.SphericalGeometry
+using Oceananigans.Grids: size
 using Oceananigans.Utils: getregion
 
 function BickleyJetGrid(bickley_jet_parameters; arch = CPU(), FT::DataType = Oceananigans.defaults.FloatType)

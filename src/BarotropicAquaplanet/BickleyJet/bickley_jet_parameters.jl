@@ -1,6 +1,4 @@
-using Oceananigans.BuoyancyFormulations: g_Earth
-using Oceananigans.Coriolis: Ω_Earth
-using Oceananigans.Grids: R_Earth
+using Oceananigans: defaults
 
 function BickleyJetParameters(; unit_sphere::Bool = true)
     non_uniform_conformal_mapping = true
@@ -8,16 +6,16 @@ function BickleyJetParameters(; unit_sphere::Bool = true)
     # uniform. This enlarges corner cells, relaxes the CFL constraint, and permits larger time steps.
 
     # Domain extents and resolution
-    R = R_Earth  # Radius of the sphere (m)
-    Lz = 1000    # Depth of the domain (m)
-    Nx = 128     # Number of grid cells in the local x direction
-    Ny = 128     # Number of grid cells in the local y direction
-    Nz = 1       # Number of grid cells in the z direction
-    H = 6        # Number of halo cells in each horizontal direction
+    R = defaults.planet_radius  # Radius of the sphere (m)
+    Lz = 1000                   # Depth of the domain (m)
+    Nx = 128                    # Number of grid cells in the local x direction
+    Ny = 128                    # Number of grid cells in the local y direction
+    Nz = 1                      # Number of grid cells in the z direction
+    H = 6                       # Number of halo cells in each horizontal direction
 
-    g = g_Earth  # Earth's gravitational acceleration (m s⁻²)
-    Ω = Ω_Earth  # Earth's rotational rate (s⁻¹)
-    
+    g = defaults.gravitational_acceleration  # Earth's gravitational acceleration (m s⁻²)
+    Ω = defaults.planet_rotation_rate        # Earth's rotational rate (s⁻¹)
+
     # Bickley jet initial condition parameters
     ϵ = 0.1      # Perturbation amplitude (non-dimensional multiplier of U_ref)
     ℓ = 0.5      # Gaussian envelope width (in angular y-coordinate units)
