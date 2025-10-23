@@ -1,5 +1,4 @@
-using Oceananigans.BuoyancyFormulations: g_Earth
-using Oceananigans.Grids: R_Earth
+using Oceananigans: defaults
 
 function TracerAdvectionParameters()
     non_uniform_conformal_mapping = true
@@ -7,21 +6,21 @@ function TracerAdvectionParameters()
     # uniform. This enlarges corner cells, relaxes the CFL constraint, and permits larger time steps.
 
     # Domain extents and resolution
-    R = R_Earth  # Radius of the sphere (m)
-    Lz = 1000    # Depth of the domain (m)
-    Nx = 128     # Number of grid cells in the local x direction
-    Ny = 128     # Number of grid cells in the local y direction
-    Nz = 1       # Number of grid cells in the z direction
-    H = 6        # Number of halo cells in each horizontal direction
-    
-    # Solid body rotation
-    U = R_Earth * 2π/86400   # Velocity scale (m s⁻¹)
-    φʳ = 0                   # Latitude pierced by the axis of rotation
-    α  = 90 - φʳ             # Angle between axis of rotation and north pole (degrees)
-    θ₀ = 1                   # Tracer amplitude
-    Δφ = 20                  # Range of the exponential tracer profile
+    R = defaults.planet_radius  # Radius of the sphere (m)
+    Lz = 1000                   # Depth of the domain (m)
+    Nx = 128                    # Number of grid cells in the local x direction
+    Ny = 128                    # Number of grid cells in the local y direction
+    Nz = 1                      # Number of grid cells in the z direction
+    H = 6                       # Number of halo cells in each horizontal direction
 
-    g = g_Earth              # Earth's gravitational acceleration (m s⁻²)
+    # Solid body rotation
+    U = R * 2π/86400  # Velocity scale (m s⁻¹)
+    φʳ = 0            # Latitude pierced by the axis of rotation
+    α  = 90 - φʳ      # Angle between axis of rotation and north pole (degrees)
+    θ₀ = 1            # Tracer amplitude
+    Δφ = 20           # Range of the exponential tracer profile
+
+    g = defaults.gravitational_acceleration  # Earth's gravitational acceleration (m s⁻²)
 
     tracer_advection_parameters = (
         non_uniform_conformal_mapping = non_uniform_conformal_mapping,

@@ -1,5 +1,5 @@
-using CubedSphere: spherical_area_triangle
-using Oceananigans.Grids: size, lat_lon_to_cartesian
+using CubedSphere.SphericalGeometry
+using Oceananigans.Grids: size
 using Oceananigans.Utils: getregion
 
 function BickleyJetGrid(bickley_jet_parameters; arch = CPU(), FT::DataType = Oceananigans.defaults.FloatType)
@@ -20,9 +20,9 @@ function BickleyJetGrid(bickley_jet_parameters; arch = CPU(), FT::DataType = Oce
 
     Nx, Ny, Nz = size(bickley_jet_grid)
 
-    a = lat_lon_to_cartesian(bickley_jet_grid[1].φᶜᶜᵃ[1, Ny], bickley_jet_grid[1].λᶜᶜᵃ[1, Ny], 1)
-    b = lat_lon_to_cartesian(bickley_jet_grid[3].φᶜᶜᵃ[1, Ny], bickley_jet_grid[3].λᶜᶜᵃ[1, Ny], 1)
-    c = lat_lon_to_cartesian(bickley_jet_grid[5].φᶜᶜᵃ[1, Ny], bickley_jet_grid[5].λᶜᶜᵃ[1, Ny], 1)
+    a = lat_lon_to_cartesian(bickley_jet_grid[1].φᶜᶜᵃ[1, Ny], bickley_jet_grid[1].λᶜᶜᵃ[1, Ny]; radius = 1)
+    b = lat_lon_to_cartesian(bickley_jet_grid[3].φᶜᶜᵃ[1, Ny], bickley_jet_grid[3].λᶜᶜᵃ[1, Ny]; radius = 1)
+    c = lat_lon_to_cartesian(bickley_jet_grid[5].φᶜᶜᵃ[1, Ny], bickley_jet_grid[5].λᶜᶜᵃ[1, Ny]; radius = 1)
 
     Azᶠᶠᵃ = spherical_area_triangle(a, b, c) * bickley_jet_parameters.R^2
     for region in 1:6
