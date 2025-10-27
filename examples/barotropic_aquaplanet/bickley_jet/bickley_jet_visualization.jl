@@ -43,7 +43,7 @@ function BickleyJetVisualization!(bickley_jet_grid, Nplots, Δt, plot_iteration_
     colorrange_plots_c = specify_colorrange_time_series(bickley_jet_grid, c_time_series_plots)
     colorrange_plots_ζ = specify_colorrange_time_series(bickley_jet_grid, ζ_time_series_plots)
 
-    for iPlot in iPlot_Start:Nplots
+    for iPlot in iPlot_Start:iPlot_Δ:Nplots
         plot_iteration = iPlot * plot_iteration_interval + 1
         title_η = "Surface elevation after $(prettytimes[plot_iteration])"
         title_c = "Tracer concentration after $(prettytimes[plot_iteration])"

@@ -80,7 +80,7 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
     
     Nx, Ny, Nz = size(baroclinic_wave_grid)
 
-    for iPlot in iPlot_Start:Nplots
+    for iPlot in iPlot_Start:iPlot_Δ:Nplots
         plot_iteration = iPlot * plot_iteration_interval + 1
         title_u = "Zonal velocity after $(prettytimes[plot_iteration])"
         title_v = "Meridional velocity after $(prettytimes[plot_iteration])"
