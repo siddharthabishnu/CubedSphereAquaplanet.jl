@@ -53,10 +53,10 @@ function BaroclinicWaveVisualization!(baroclinic_wave_grid, Nplots, Δt, plot_it
     u_time_series_plots = []
     v_time_series_plots = []
     w_time_series_plots = []
-    η_time_seris_plots = []
-    T_time_seris_plots = []
-    S_time_seris_plots = []
-    ζ_time_seris_plots = []
+    η_time_series_plots = []
+    T_time_series_plots = []
+    S_time_series_plots = []
+    ζ_time_series_plots = []
 
     for iPlot in iPlot_Start:iPlot_Δ:Nplots
         plot_iteration = iPlot * plot_iteration_interval + 1

@@ -27,21 +27,21 @@ function BickleyJetVisualization!(bickley_jet_grid, Nplots, Δt, plot_iteration_
     colorrange_ζ = specify_colorrange_time_series(bickley_jet_grid, ζ_time_series)
     colormap = :balance
     
-    η_time_seris_plots = []
-    c_time_seris_plots = []
-    ζ_time_seris_plots = []
+    η_time_series_plots = []
+    c_time_series_plots = []
+    ζ_time_series_plots = []
 
     for iPlot in iPlot_Start:iPlot_Δ:Nplots
         plot_iteration = iPlot * plot_iteration_interval + 1
-        push!(η_time_seris_plots, deepcopy(η_time_series[plot_iteration]))
-        push!(c_time_seris_plots, deepcopy(c_time_series[plot_iteration]))
-        push!(ζ_time_seris_plots, deepcopy(ζ_time_series[plot_iteration]))
+        push!(η_time_series_plots, deepcopy(η_time_series[plot_iteration]))
+        push!(c_time_series_plots, deepcopy(c_time_series[plot_iteration]))
+        push!(ζ_time_series_plots, deepcopy(ζ_time_series[plot_iteration]))
     end
 
-    colorrange_plots_η = specify_colorrange_time_series(bickley_jet_grid, η_time_seris_plots;
+    colorrange_plots_η = specify_colorrange_time_series(bickley_jet_grid, η_time_series_plots;
                                                         ssh = true)
-    colorrange_plots_c = specify_colorrange_time_series(bickley_jet_grid, c_time_seris_plots)
-    colorrange_plots_ζ = specify_colorrange_time_series(bickley_jet_grid, ζ_time_seris_plots)
+    colorrange_plots_c = specify_colorrange_time_series(bickley_jet_grid, c_time_series_plots)
+    colorrange_plots_ζ = specify_colorrange_time_series(bickley_jet_grid, ζ_time_series_plots)
 
     for iPlot in iPlot_Start:Nplots
         plot_iteration = iPlot * plot_iteration_interval + 1
