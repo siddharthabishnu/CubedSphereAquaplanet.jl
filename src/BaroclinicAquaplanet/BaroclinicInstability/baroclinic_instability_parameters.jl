@@ -22,21 +22,15 @@ function BaroclinicInstabilityParameters()
     c = sqrt(g * Lz)  # Gravity wave speed (m s⁻¹)
 
     # Initial condition parameters
-    T0  = 30               # Reference surface conservative temperature (°C)
-    φ0  = 45               # Central latitude of temperature front (degrees)
-    Δφ  = 8                # Meridional half-width of temperature front (degrees)
-    ϵT  = 1e-3             # Amplitude of small temperature perturbations (°C)
-    S0  = 35               # Reference surface absolute salinity (g/kg)
-    γS  = 3e-4             # Vertical salinity gradient (g/kg per meter)
-    ϵS  = 1e-3             # Amplitude of small salinity perturbations (g/kg)
+    T0  = 30    # Reference surface conservative temperature (°C)
+    φ0  = 45    # Central latitude of temperature front (degrees)
+    Δφ  = 8     # Meridional half-width of temperature front (degrees)
+    ϵT  = 1e-3  # Amplitude of small temperature perturbations (°C)
+    S0  = 35    # Reference surface absolute salinity (g/kg)
+    γS  = 3e-4  # Vertical salinity gradient (g/kg per meter)
+    ϵS  = 1e-3  # Amplitude of small salinity perturbations (g/kg)
 
-    L = 150e3              # Target horizontal smoothing length scale (m)
-    ν = 0.5                # Diffusivity (chosen so that τ = L^2)
-    safety = 0.2           # CFL-like stability factor for explicit diffusion steps
-
-    τ_target = L^2 / (2ν)  # Total diffusion time to achieve Gaussian smoothing with scale L
-
-    λ_rts = 2days          # Relaxation timescale for biharmonic viscosity
+    λ_rts = 2days  # Relaxation timescale for biharmonic viscosity
     vector_invariant_momentum_advection = true
     # If true, use the vector invariant formulation for momentum advection; otherwise, use WENO momentum advection
 
@@ -59,10 +53,6 @@ function BaroclinicInstabilityParameters()
         S0 = S0,
         γS = γS,
         ϵS = ϵS,
-        L = L,
-        ν = ν,
-        safety = safety,
-        τ_target = τ_target,
         λ_rts = λ_rts,
         vector_invariant_momentum_advection = vector_invariant_momentum_advection
     )
