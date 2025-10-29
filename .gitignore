@@ -32,7 +32,7 @@ docs/Manifest.toml
 examples/barotropic_aquaplanet/tracer_advection/tracer_advection_output
 examples/barotropic_aquaplanet/rossby_haurwitz_wave/rossby_haurwitz_wave_output
 examples/barotropic_aquaplanet/bickley_jet/bickley_jet_output
-examples/baroclinic_aquaplanet/baroclinic_wave/baroclinic_wave_output
+examples/baroclinic_aquaplanet/baroclinic_instability/baroclinic_instability_output
 
  Plots
 *.png

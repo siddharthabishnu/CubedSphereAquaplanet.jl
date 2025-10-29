@@ -3,33 +3,34 @@ using SeawaterPolynomials.TEOS10: TEOS10EquationOfState
 using Oceananigans.Units: minutes, hours, days
 using Oceananigans.Utils: getregion
 
-function BaroclinicWaveSimulation(arch;
-                                  parameters = BaroclinicWaveParameters(),
-                                  grid = BaroclinicWaveGrid(parameters; arch),
-                                  momentum_advection = WENOVectorInvariant(),
-                                  tracer_advection = WENO(order = 7),
-                                  substeps = 50,
-                                  free_surface = SplitExplicitFreeSurface(grid;
-                                                                          substeps,
-                                                                          gravitational_acceleration = parameters.g),
-                                  coriolis = HydrostaticSphericalCoriolis(rotation_rate = parameters.Ω),
-                                  boundary_conditions = BaroclinicWaveBoundaryConditions(parameters),
-                                  closure = BaroclinicWaveClosure(),
-                                  tracers = (:T, :S),
-                                  buoyancy = SeawaterBuoyancy(equation_of_state = TEOS10EquationOfState()),
-                                  Δt = 5minutes,
-                                  stop_time = 200days,
-                                  Ntime = round(Int, stop_time / Δt),
-                                  align_time_step = false,
-                                  progress_message_iteration_interval = 100,
-                                  checkpointer_interval = 40days,
-                                  output_interval = 2.5days)
+function BaroclinicInstabilitySimulation(arch;
+                                         parameters = BaroclinicInstabilityParameters(),
+                                         grid = BaroclinicInstabilityGrid(parameters; arch),
+                                         momentum_advection = WENOVectorInvariant(),
+                                         tracer_advection = WENO(order = 7),
+                                         substeps = 50,
+                                         free_surface = 
+                                             SplitExplicitFreeSurface(grid;
+                                                                      substeps,
+                                                                      gravitational_acceleration = parameters.g),
+                                         coriolis = HydrostaticSphericalCoriolis(rotation_rate = parameters.Ω),
+                                         boundary_conditions = BaroclinicInstabilityBoundaryConditions(parameters),
+                                         closure = BaroclinicInstabilityClosure(),
+                                         tracers = (:T, :S),
+                                         buoyancy = SeawaterBuoyancy(equation_of_state = TEOS10EquationOfState()),
+                                         Δt = 5minutes,
+                                         stop_time = 200days,
+                                         Ntime = round(Int, stop_time / Δt),
+                                         align_time_step = false,
+                                         progress_message_iteration_interval = 100,
+                                         checkpointer_interval = 40days,
+                                         output_interval = 2.5days)
     #####
     ##### Model setup
     #####
 
     @info "Building model..."
-    baroclinic_wave_model = (
+    baroclinic_instability_model = (
         HydrostaticFreeSurfaceModel(; grid,
                                       momentum_advection,
                                       tracer_advection,
@@ -41,7 +42,7 @@ function BaroclinicWaveSimulation(arch;
                                       buoyancy))
 
     @info "Initializing model..."
-    BaroclinicWaveInitialConditions!(parameters, baroclinic_wave_model)
+    BaroclinicInstabilityInitialConditions!(parameters, baroclinic_instability_model)
 
     #####
     ##### Simulation setup
@@ -50,7 +51,7 @@ function BaroclinicWaveSimulation(arch;
     @info "Stop time = $(prettytime(stop_time))"
     @info "Number of time steps = $Ntime"
 
-    baroclinic_wave_simulation = Simulation(baroclinic_wave_model; Δt, stop_time, align_time_step)
+    baroclinic_instability_simulation = Simulation(baroclinic_instability_model; Δt, stop_time, align_time_step)
 
     #####
     ##### Callbacks
@@ -83,7 +84,7 @@ function BaroclinicWaveSimulation(arch;
         wall_time = time_ns()
     end
 
-    baroclinic_wave_simulation.callbacks[:progress] = Callback(
+    baroclinic_instability_simulation.callbacks[:progress] = Callback(
         progress_message, IterationInterval(progress_message_iteration_interval))
 
     #####
@@ -91,7 +92,7 @@ function BaroclinicWaveSimulation(arch;
     #####
 
     @info "Building checkpointer and output writer..."
-    BaroclinicWaveOutputs!(baroclinic_wave_simulation; checkpointer_interval, output_interval)
+    BaroclinicInstabilityOutputs!(baroclinic_instability_simulation; checkpointer_interval, output_interval)
 
-    return baroclinic_wave_simulation
+    return baroclinic_instability_simulation
 end

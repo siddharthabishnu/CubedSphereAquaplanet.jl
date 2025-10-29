@@ -1,7 +1,7 @@
 module BaroclinicAquaplanet
 
-include("BaroclinicWave/BaroclinicWave.jl")
+include("BaroclinicInstability/BaroclinicInstability.jl")
 
-using .BaroclinicWave
+using .BaroclinicInstability
 
 end # module BaroclinicAquaplanet

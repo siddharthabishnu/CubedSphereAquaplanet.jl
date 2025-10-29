@@ -98,17 +98,18 @@ function apply_gaussian_filter!(c, params)
     c = deepcopy(c_old)
 end
 
-function BaroclinicWaveInitialConditions!(baroclinic_wave_parameters, baroclinic_wave_model)
-    baroclinic_wave_grid = baroclinic_wave_model.grid
-    arch = baroclinic_wave_grid.architecture
-    Nx, Ny, Nz = size(baroclinic_wave_grid)
+function BaroclinicInstabilityInitialConditions!(baroclinic_instability_parameters, baroclinic_instability_model)
+    baroclinic_instability_grid = baroclinic_instability_model.grid
+    arch = baroclinic_instability_grid.architecture
+    Nx, Ny, Nz = size(baroclinic_instability_grid)
     
     @inline Tᵢ(λ, φ, z) =
-        baroclinic_wave_parameters.T0 * (1 - tanh((abs(φ) - baroclinic_wave_parameters.φ0)
-                                                  / baroclinic_wave_parameters.Δφ)) / 2
-        + baroclinic_wave_parameters.ϵT * randn()
+        baroclinic_instability_parameters.T0 * (1 - tanh((abs(φ) - baroclinic_instability_parameters.φ0)
+                                                  / baroclinic_instability_parameters.Δφ)) / 2
+        + baroclinic_instability_parameters.ϵT * randn()
     @inline Sᵢ(λ, φ, z) =
-        baroclinic_wave_parameters.S0 - baroclinic_wave_parameters.γS * z + baroclinic_wave_parameters.ϵS * randn()
+        (baroclinic_instability_parameters.S0 - baroclinic_instability_parameters.γS * z
+         + baroclinic_instability_parameters.ϵS * randn())
 
     #####
     ##### Initial condition
@@ -116,12 +117,12 @@ function BaroclinicWaveInitialConditions!(baroclinic_wave_parameters, baroclinic
 
     @info "Setting initial condition..."
     
-    set!(baroclinic_wave_model.tracers.T, Tᵢ)
-    set!(baroclinic_wave_model.tracers.S, Sᵢ)
+    set!(baroclinic_instability_model.tracers.T, Tᵢ)
+    set!(baroclinic_instability_model.tracers.S, Sᵢ)
 
-    apply_gaussian_filter!(baroclinic_wave_model.tracers.T, baroclinic_wave_parameters)
-    apply_gaussian_filter!(baroclinic_wave_model.tracers.S, baroclinic_wave_parameters)
+    apply_gaussian_filter!(baroclinic_instability_model.tracers.T, baroclinic_instability_parameters)
+    apply_gaussian_filter!(baroclinic_instability_model.tracers.S, baroclinic_instability_parameters)
 
-    fill_halo_regions!(baroclinic_wave_model.tracers.T)
-    fill_halo_regions!(baroclinic_wave_model.tracers.S)
+    fill_halo_regions!(baroclinic_instability_model.tracers.T)
+    fill_halo_regions!(baroclinic_instability_model.tracers.S)
 end

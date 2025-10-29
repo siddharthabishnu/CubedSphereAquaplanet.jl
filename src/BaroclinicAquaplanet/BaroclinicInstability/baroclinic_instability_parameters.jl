@@ -1,6 +1,6 @@
 using Oceananigans: defaults
 
-function BaroclinicWaveParameters()
+function BaroclinicInstabilityParameters()
     non_uniform_conformal_mapping = true
     # If true, applies a stretched conformal map (exponential or geometric spacing) to make the cubed-sphere grid more
     # uniform. This enlarges corner cells, relaxes the CFL constraint, and permits larger time steps.
@@ -36,7 +36,7 @@ function BaroclinicWaveParameters()
 
     τ_target = L^2 / (2ν)  # Total diffusion time to achieve Gaussian smoothing with scale L
 
-    baroclinic_wave_parameters = (
+    baroclinic_instability_parameters = (
         non_uniform_conformal_mapping = non_uniform_conformal_mapping,
         R = R,    
         Lz = Lz,
@@ -61,5 +61,5 @@ function BaroclinicWaveParameters()
         τ_target = τ_target
     )
 
-    return baroclinic_wave_parameters
+    return baroclinic_instability_parameters
 end
