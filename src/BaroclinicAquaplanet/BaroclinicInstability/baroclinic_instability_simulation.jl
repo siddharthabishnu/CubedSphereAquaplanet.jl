@@ -15,7 +15,7 @@ function BaroclinicInstabilitySimulation(arch;
                                                                       gravitational_acceleration = parameters.g),
                                          coriolis = HydrostaticSphericalCoriolis(rotation_rate = parameters.Ω),
                                          boundary_conditions = BaroclinicInstabilityBoundaryConditions(parameters),
-                                         closure = BaroclinicInstabilityClosure(),
+                                         closure = BaroclinicInstabilityClosure(parameters),
                                          tracers = (:T, :S),
                                          buoyancy = SeawaterBuoyancy(equation_of_state = TEOS10EquationOfState()),
                                          Δt = 5minutes,
@@ -28,6 +28,10 @@ function BaroclinicInstabilitySimulation(arch;
     #####
     ##### Model setup
     #####
+
+    if parameters.vector_invariant_momentum_advection
+        momentum_advection = VectorInvariant()
+    end
 
     @info "Building model..."
     baroclinic_instability_model = (
