@@ -1,4 +1,5 @@
 using Oceananigans: defaults
+using Oceananigans.Units: days
 
 function BaroclinicInstabilityParameters()
     non_uniform_conformal_mapping = true
