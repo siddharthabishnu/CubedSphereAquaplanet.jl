@@ -32,7 +32,7 @@ function BaroclinicInstabilityParameters()
     ϵS  = 1e-3  # Amplitude of small salinity perturbations (g/kg)
 
     λ_rts = 2days  # Relaxation timescale for biharmonic viscosity
-    vector_invariant_momentum_advection = true
+    vector_invariant_momentum_advection = false
     # If true, use the vector invariant formulation for momentum advection; otherwise, use WENO momentum advection
 
     baroclinic_instability_parameters = (

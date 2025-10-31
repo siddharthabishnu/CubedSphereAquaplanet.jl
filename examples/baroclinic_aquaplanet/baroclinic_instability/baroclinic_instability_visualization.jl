@@ -1,34 +1,36 @@
 include("../../cubed_sphere_visualization.jl")
 
-function BaroclinicInstabilityVisualization!(baroclinic_instability_grid, Nplots, Δt, plot_iteration_interval,
-                                             prettytimes, framerate;
-                                             output_directory::String = "baroclinic_instability_output",
-                                             output_filename::String = "baroclinic_instability_output.jld2",
-                                             iPlot_Start::Int = 0,
-                                             iPlot_Δ::Int = 1,
-                                             plot_states::Dict{Symbol,Bool} = Dict(:u => true,
-                                                                                   :v => true,
-                                                                                   :w => true,
-                                                                                   :η => true,
-                                                                                   :T => true,
-                                                                                   :S => true,
-                                                                                   :ζ => true),
-                                             make_panelwise_visualization_plots_with_halos::Bool = false,
-                                             make_panelwise_visualization_plots::Bool = false,
-                                             geo_heatmap_type::String = "heatlatlon",
-                                             make_geo_heatmap_visualization_plots::Bool = false,
-                                             plot_frames::Bool = false,
-                                             make_panelwise_visualization_animation_with_halos::Bool = false,
-                                             make_panelwise_visualization_animation::Bool = false,
-                                             make_geo_heatmap_visualization_animation::Bool = false)
+function BaroclinicInstabilityVisualization!(
+    baroclinic_instability_grid, Nplots, Δt, plot_iteration_interval,
+    prettytimes, framerate;
+    output_directory::String = "baroclinic_instability_output",
+    prognostic_output_filename::String = "baroclinic_instability_surface_prognostic_fields_output.jld2",
+    diagnostic_output_filename::String = "baroclinic_instability_surface_diagnostic_fields_output.jld2",
+    iPlot_Start::Int = 0,
+    iPlot_Δ::Int = 1,
+    plot_states::Dict{Symbol,Bool} = Dict(:u => true,
+                                          :v => true,
+                                          :w => true,
+                                          :η => true,
+                                          :T => true,
+                                          :S => true,
+                                          :ζ => true),
+    make_panelwise_visualization_plots_with_halos::Bool = false,
+    make_panelwise_visualization_plots::Bool = false,
+    geo_heatmap_type::String = "heatlatlon",
+    make_geo_heatmap_visualization_plots::Bool = false,
+    plot_frames::Bool = false,
+    make_panelwise_visualization_animation_with_halos::Bool = false,
+    make_panelwise_visualization_animation::Bool = false,
+    make_geo_heatmap_visualization_animation::Bool = false)
     (plot_states[:u] || plot_states[:ζ]) &&
-        (u_time_series = FieldTimeSeries(joinpath(output_directory, output_filename), "u"))
+        (u_time_series = FieldTimeSeries(joinpath(output_directory, prognostic_output_filename), "u"))
     (plot_states[:v] || plot_states[:ζ]) &&
-        (v_time_series = FieldTimeSeries(joinpath(output_directory, output_filename), "v"))
-    plot_states[:w] && (w_time_series = FieldTimeSeries(joinpath(output_directory, output_filename), "w"))
-    plot_states[:η] && (η_time_series = FieldTimeSeries(joinpath(output_directory, output_filename), "η"))
-    plot_states[:T] && (T_time_series = FieldTimeSeries(joinpath(output_directory, output_filename), "T"))
-    plot_states[:S] && (S_time_series = FieldTimeSeries(joinpath(output_directory, output_filename), "S"))
+        (v_time_series = FieldTimeSeries(joinpath(output_directory, prognostic_output_filename), "v"))
+    plot_states[:w] && (w_time_series = FieldTimeSeries(joinpath(output_directory, diagnostic_output_filename), "w"))
+    plot_states[:η] && (η_time_series = FieldTimeSeries(joinpath(output_directory, diagnostic_output_filename), "η"))
+    plot_states[:T] && (T_time_series = FieldTimeSeries(joinpath(output_directory, prognostic_output_filename), "T"))
+    plot_states[:S] && (S_time_series = FieldTimeSeries(joinpath(output_directory, prognostic_output_filename), "S"))
 
     plot_states[:ζ] &&
         (ζ_time_series = compute_vorticity_time_series(baroclinic_instability_grid, u_time_series, v_time_series))
@@ -60,24 +62,31 @@ function BaroclinicInstabilityVisualization!(baroclinic_instability_grid, Nplots
 
     for iPlot in iPlot_Start:iPlot_Δ:Nplots
         plot_iteration = iPlot * plot_iteration_interval + 1
-        push!(u_time_series_plots, deepcopy(u_time_series[plot_iteration]))
-        push!(v_time_series_plots, deepcopy(v_time_series[plot_iteration]))
-        push!(w_time_series_plots, deepcopy(w_time_series[plot_iteration]))
-        push!(η_time_series_plots, deepcopy(η_time_series[plot_iteration]))
-        push!(T_time_series_plots, deepcopy(T_time_series[plot_iteration]))
-        push!(S_time_series_plots, deepcopy(S_time_series[plot_iteration]))
-        push!(ζ_time_series_plots, deepcopy(ζ_time_series[plot_iteration]))
+        plot_states[:u] && push!(u_time_series_plots, deepcopy(u_time_series[plot_iteration]))
+        plot_states[:v] && push!(v_time_series_plots, deepcopy(v_time_series[plot_iteration]))
+        plot_states[:w] && push!(w_time_series_plots, deepcopy(w_time_series[plot_iteration]))
+        plot_states[:η] && push!(η_time_series_plots, deepcopy(η_time_series[plot_iteration]))
+        plot_states[:T] && push!(T_time_series_plots, deepcopy(T_time_series[plot_iteration]))
+        plot_states[:S] && push!(S_time_series_plots, deepcopy(S_time_series[plot_iteration]))
+        plot_states[:ζ] && push!(ζ_time_series_plots, deepcopy(ζ_time_series[plot_iteration]))
     end
     
-    colorrange_plots_u = specify_colorrange_time_series(baroclinic_instability_grid, u_time_series_plots)
-    colorrange_plots_v = specify_colorrange_time_series(baroclinic_instability_grid, v_time_series_plots)
-    colorrange_plots_w = specify_colorrange_time_series(baroclinic_instability_grid, w_time_series_plots)
-    colorrange_plots_η = specify_colorrange_time_series(baroclinic_instability_grid, η_time_series_plots;
-                                                        ssh = true)
-    colorrange_plots_T = specify_colorrange_time_series(baroclinic_instability_grid, T_time_series_plots)
-    colorrange_plots_S = specify_colorrange_time_series(baroclinic_instability_grid, S_time_series_plots)
-    colorrange_plots_ζ = specify_colorrange_time_series(baroclinic_instability_grid, ζ_time_series_plots)
-    
+    plot_states[:u] && (colorrange_plots_u = specify_colorrange_time_series(baroclinic_instability_grid,
+                                                                            u_time_series_plots))
+    plot_states[:v] && (colorrange_plots_v = specify_colorrange_time_series(baroclinic_instability_grid,
+                                                                            v_time_series_plots))
+    plot_states[:w] && (colorrange_plots_w = specify_colorrange_time_series(baroclinic_instability_grid,
+                                                                            w_time_series_plots))
+    plot_states[:η] && (colorrange_plots_η = specify_colorrange_time_series(baroclinic_instability_grid,
+                                                                            η_time_series_plots;
+                                                                            ssh = true))
+    plot_states[:T] && (colorrange_plots_T = specify_colorrange_time_series(baroclinic_instability_grid,
+                                                                            T_time_series_plots))
+    plot_states[:S] && (colorrange_plots_S = specify_colorrange_time_series(baroclinic_instability_grid,
+                                                                            S_time_series_plots))
+    plot_states[:ζ] && (colorrange_plots_ζ = specify_colorrange_time_series(baroclinic_instability_grid,
+                                                                            ζ_time_series_plots))
+
     Nx, Ny, Nz = size(baroclinic_instability_grid)
 
     for iPlot in iPlot_Start:iPlot_Δ:Nplots

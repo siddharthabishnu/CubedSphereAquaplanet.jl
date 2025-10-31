@@ -20,7 +20,7 @@ function BaroclinicInstabilityOutputs!(baroclinic_instability_simulation;
                  T = baroclinic_instability_model.tracers.T,
                  S = baroclinic_instability_model.tracers.S)
     output_filename = "baroclinic_instability_surface_prognostic_fields_output"
-    baroclinic_instability_simulation.output_writers[:output] =
+    baroclinic_instability_simulation.output_writers[:surface_prognostic_fields_output] =
         JLD2Writer(baroclinic_instability_model, outputs;
                    dir = output_directory,
                    schedule = TimeInterval(output_interval),
@@ -32,7 +32,7 @@ function BaroclinicInstabilityOutputs!(baroclinic_instability_simulation;
     outputs = (; w = baroclinic_instability_model.velocities.w,
                  η = baroclinic_instability_model.free_surface.η)
     output_filename = "baroclinic_instability_surface_diagnostic_fields_output"
-    baroclinic_instability_simulation.output_writers[:output] =
+    baroclinic_instability_simulation.output_writers[:surface_diagnostic_fields_output] =
         JLD2Writer(baroclinic_instability_model, outputs;
                    dir = output_directory,
                    schedule = TimeInterval(output_interval),
@@ -40,5 +40,4 @@ function BaroclinicInstabilityOutputs!(baroclinic_instability_simulation;
                    indices = (:, :, baroclinic_instability_grid.Nz + 1),
                    verbose,
                    overwrite_existing)
-        
 end
