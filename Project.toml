@@ -4,6 +4,7 @@ authors = ["Sid Bishnu"]
 version = "1.0.0-DEV"
 
 [deps]
+Adapt = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
 CubedSphere = "7445602f-e544-4518-8976-18f8e8ae6cdb"
 JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 KernelAbstractions = "63c18a36-062a-441e-b654-da1e3ab1ce7c"
