@@ -18,6 +18,7 @@ using Oceananigans.BoundaryConditions
 
 include("bickley_jet_parameters.jl")
 include("bickley_jet_grid.jl")
+include("bickley_jet_closure.jl")
 include("bickley_jet_initial_conditions.jl")
 include("bickley_jet_outputs.jl")
 include("bickley_jet_simulation.jl")

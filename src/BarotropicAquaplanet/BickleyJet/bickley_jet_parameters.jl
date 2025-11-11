@@ -27,10 +27,8 @@ function BickleyJetParameters(; unit_sphere::Bool = true)
         Lz = 1                    # Nondimensional depth
         g  = 1                    # Nondimensional gravitational acceleration
         Ω  = 1                    # Nondimensional rotational rate
-
         a_jet  = 1                # Jet width parameter (L = R / a_jet)
         b_pert = 1 / k            # Sets zonal wave number: m = k * b_pert
-
     else
         # Earth-like dimensional case
         a_jet  = 24               # Jet width parameter (L = R / 24 ≈ 265 km), gives β* ~ O(1)
@@ -45,6 +43,10 @@ function BickleyJetParameters(; unit_sphere::Bool = true)
     
     ψ₀_jet  = U_ref * R / a_jet   # Base jet streamfunction amplitude → peak jet speed ≈ U_ref
     ψ₀_pert = U_ref * R / a_pert  # Perturbation streamfunction amplitude (scales u_pert ≈ ϵ U_ref)
+
+    λ_rts = 2days  # Relaxation timescale for biharmonic viscosity
+    vector_invariant_momentum_advection = false
+    # If true, use the vector invariant formulation for momentum advection; otherwise, use WENO momentum advection
 
     bickley_jet_parameters = (
         non_uniform_conformal_mapping = non_uniform_conformal_mapping,
@@ -64,7 +66,9 @@ function BickleyJetParameters(; unit_sphere::Bool = true)
         b_pert = b_pert,
         c = c,
         ψ₀_jet = ψ₀_jet,
-        ψ₀_pert = ψ₀_pert
+        ψ₀_pert = ψ₀_pert,
+        λ_rts = λ_rts,
+        vector_invariant_momentum_advection = vector_invariant_momentum_advection
     )
 
     return bickley_jet_parameters

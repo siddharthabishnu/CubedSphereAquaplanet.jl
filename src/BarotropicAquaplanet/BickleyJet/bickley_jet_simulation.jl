@@ -10,6 +10,7 @@ function BickleyJetSimulation(
     tracer_advection = WENO(order=9),
     free_surface = ExplicitFreeSurface(; gravitational_acceleration = parameters.g),
     coriolis = HydrostaticSphericalCoriolis(rotation_rate = parameters.Ω),
+    closure = BickleyJetClosure(parameters),
     tracers = :c,
     buoyancy = nothing,
     Courant_number = 0.2,
@@ -26,6 +27,10 @@ function BickleyJetSimulation(
     ##### Model setup
     #####
 
+    if parameters.vector_invariant_momentum_advection
+        momentum_advection = VectorInvariant()
+    end
+
     @info "Building model..."
     bickley_jet_model = (
         HydrostaticFreeSurfaceModel(; grid,
@@ -33,6 +38,7 @@ function BickleyJetSimulation(
                                       tracer_advection,
                                       free_surface,
                                       coriolis,
+                                      closure,
                                       tracers,
                                       buoyancy))
 
