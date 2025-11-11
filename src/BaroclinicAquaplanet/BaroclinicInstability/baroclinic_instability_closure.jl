@@ -27,8 +27,8 @@ function BaroclinicInstabilityClosure(baroclinic_instability_parameters)
                                           baroclinic_instability_vertical_diffusivity,
                                           baroclinic_instability_convective_adjustment)
     else
-         baroclinic_instability_closure = (baroclinic_instability_vertical_diffusivity,
-                                           baroclinic_instability_convective_adjustment)
+        baroclinic_instability_closure = (baroclinic_instability_vertical_diffusivity,
+                                          baroclinic_instability_convective_adjustment)
     end
 
     return baroclinic_instability_closure
