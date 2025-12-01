@@ -11,15 +11,22 @@ function BaroclinicInstabilityInitialConditions!(baroclinic_instability_paramete
         (baroclinic_instability_parameters.S0 - baroclinic_instability_parameters.γS * z
          + baroclinic_instability_parameters.ϵS * randn())
 
+    @inline bᵢ(λ, φ, z) = baroclinic_instability_parameters.b0 + baroclinic_instability_parameters.N² * z
+
     #####
     ##### Initial condition
     #####
 
     @info "Setting initial condition..."
     
-    set!(baroclinic_instability_model.tracers.T, Tᵢ)
-    set!(baroclinic_instability_model.tracers.S, Sᵢ)
+    if baroclinic_instability_parameters.no_momentum_advection
+        set!(baroclinic_instability_model.tracers.b, bᵢ)
+        fill_halo_regions!(baroclinic_instability_model.tracers.b)
+    else
+        set!(baroclinic_instability_model.tracers.T, Tᵢ)
+        set!(baroclinic_instability_model.tracers.S, Sᵢ)
 
-    fill_halo_regions!(baroclinic_instability_model.tracers.T)
-    fill_halo_regions!(baroclinic_instability_model.tracers.S)
+        fill_halo_regions!(baroclinic_instability_model.tracers.T)
+        fill_halo_regions!(baroclinic_instability_model.tracers.S)
+    end
 end

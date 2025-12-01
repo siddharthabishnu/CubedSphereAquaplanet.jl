@@ -1,4 +1,4 @@
-function BaroclinicInstabilityOutputs!(baroclinic_instability_simulation;
+function BaroclinicInstabilityOutputs!(baroclinic_instability_parameters, baroclinic_instability_simulation;
                                        output_directory = "baroclinic_instability_output",
                                        verbose = false, 
                                        overwrite_existing = true,
@@ -15,10 +15,16 @@ function BaroclinicInstabilityOutputs!(baroclinic_instability_simulation;
                      prefix = checkpointer_filename,
                      overwrite_existing)
 
-    outputs = (; u = baroclinic_instability_model.velocities.u,
-                 v = baroclinic_instability_model.velocities.v,
-                 T = baroclinic_instability_model.tracers.T,
-                 S = baroclinic_instability_model.tracers.S)
+    if baroclinic_instability_parameters.no_momentum_advection
+        outputs = (; u = baroclinic_instability_model.velocities.u,
+                     v = baroclinic_instability_model.velocities.v,
+                     b = baroclinic_instability_model.tracers.b)
+    else
+        outputs = (; u = baroclinic_instability_model.velocities.u,
+                     v = baroclinic_instability_model.velocities.v,
+                     T = baroclinic_instability_model.tracers.T,
+                     S = baroclinic_instability_model.tracers.S)
+    end
     output_filename = "baroclinic_instability_surface_prognostic_fields_output"
     baroclinic_instability_simulation.output_writers[:surface_prognostic_fields_output] =
         JLD2Writer(baroclinic_instability_model, outputs;
