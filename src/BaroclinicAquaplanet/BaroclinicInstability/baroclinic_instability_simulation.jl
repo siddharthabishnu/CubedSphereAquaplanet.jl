@@ -31,6 +31,7 @@ function BaroclinicInstabilitySimulation(arch;
 
     if parameters.no_momentum_advection
         momentum_advection = nothing
+        closure = nothing # Causes blow-up if not set to nothing
         tracers = :b
         buoyancy = BuoyancyTracer()
     elseif parameters.vector_invariant_momentum_advection
