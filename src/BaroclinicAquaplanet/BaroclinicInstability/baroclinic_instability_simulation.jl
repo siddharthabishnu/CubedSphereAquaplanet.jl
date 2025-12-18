@@ -108,6 +108,8 @@ function BaroclinicInstabilitySimulation(arch;
 
         # Print everything in one call
         Printf.format(stdout, progress_format, common_args..., tracer_args..., timing_args...)
+
+        wall_time = time_ns()
     end
 
     baroclinic_instability_simulation.callbacks[:progress] = Callback(
