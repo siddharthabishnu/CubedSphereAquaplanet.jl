@@ -34,7 +34,7 @@ function BaroclinicInstabilityParameters()
     N² = 1e-4  # Reference buoyancy frequency squared (s⁻²)
 
     λ_rts = 2days  # Relaxation timescale for biharmonic viscosity
-    no_momentum_advection = true  # If true, disable momentum advection entirely (for debugging purposes)
+    no_momentum_advection = false  # If true, disable momentum advection entirely (for debugging purposes)
     vector_invariant_momentum_advection = false
     # If true, use the vector invariant formulation for momentum advection; otherwise, use WENO momentum advection
 
