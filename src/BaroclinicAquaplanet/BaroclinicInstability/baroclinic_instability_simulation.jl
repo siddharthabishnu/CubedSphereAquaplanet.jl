@@ -12,7 +12,8 @@ function BaroclinicInstabilitySimulation(arch;
                                          free_surface = 
                                              SplitExplicitFreeSurface(grid;
                                                                       substeps,
-                                                                      gravitational_acceleration = parameters.g),
+                                                                      gravitational_acceleration = parameters.g,
+                                                                      extend_halos = parameters.extend_halos),
                                          coriolis = HydrostaticSphericalCoriolis(rotation_rate = parameters.Ω),
                                          boundary_conditions = BaroclinicInstabilityBoundaryConditions(parameters),
                                          closure = BaroclinicInstabilityClosure(parameters),

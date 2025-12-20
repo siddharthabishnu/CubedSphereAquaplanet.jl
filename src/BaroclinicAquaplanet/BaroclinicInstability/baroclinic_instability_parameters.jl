@@ -23,20 +23,23 @@ function BaroclinicInstabilityParameters()
     c = sqrt(g * Lz)  # Gravity wave speed (m s⁻¹)
 
     # Initial condition parameters
-    T0 = 30    # Reference surface conservative temperature (°C)
-    φ0 = 45    # Central latitude of temperature front (degrees)
-    Δφ = 8     # Meridional half-width of temperature front (degrees)
-    ϵT = 1e-3  # Amplitude of small temperature perturbations (°C)
-    S0 = 35    # Reference surface absolute salinity (g/kg)
-    γS = 3e-4  # Vertical salinity gradient (g/kg per meter)
-    ϵS = 1e-3  # Amplitude of small salinity perturbations (g/kg)
-    b0 = -1e-2 # Initial buoyancy at z = 0 (m s⁻²)
-    N² = 1e-4  # Reference buoyancy frequency squared (s⁻²)
+    T0 = 30     # Reference surface conservative temperature (°C)
+    φ0 = 45     # Central latitude of temperature front (degrees)
+    Δφ = 8      # Meridional half-width of temperature front (degrees)
+    ϵT = 1e-3   # Amplitude of small temperature perturbations (°C)
+    S0 = 35     # Reference surface absolute salinity (g/kg)
+    γS = 3e-4   # Vertical salinity gradient (g/kg per meter)
+    ϵS = 1e-3   # Amplitude of small salinity perturbations (g/kg)
+    b0 = -1e-2  # Initial buoyancy at z = 0 (m s⁻²)
+    N² = 1e-4   # Reference buoyancy frequency squared (s⁻²)
 
     λ_rts = 2days  # Relaxation timescale for biharmonic viscosity
     no_momentum_advection = false  # If true, disable momentum advection entirely (for debugging purposes)
     vector_invariant_momentum_advection = false
     # If true, use the vector invariant formulation for momentum advection; otherwise, use WENO momentum advection
+    extend_halos = true
+    # Extend halos to allow a single halo exchange per baroclinic time step and evolve halo values during barotropic
+    # subcycling for improved performance
 
     baroclinic_instability_parameters = (
         non_uniform_conformal_mapping = non_uniform_conformal_mapping,
@@ -61,7 +64,8 @@ function BaroclinicInstabilityParameters()
         N² = N²,
         λ_rts = λ_rts,
         no_momentum_advection = no_momentum_advection,
-        vector_invariant_momentum_advection = vector_invariant_momentum_advection
+        vector_invariant_momentum_advection = vector_invariant_momentum_advection,
+        extend_halos = extend_halos,
     )
 
     return baroclinic_instability_parameters
