@@ -32,11 +32,14 @@ function BaroclinicInstabilityVisualization!(
     plot_states[:T] && (T_time_series = FieldTimeSeries(joinpath(output_directory, prognostic_output_filename), "T"))
     plot_states[:S] && (S_time_series = FieldTimeSeries(joinpath(output_directory, prognostic_output_filename), "S"))
 
+    @info "Computing ζ_time_series..."
     plot_states[:ζ] &&
         (ζ_time_series = compute_vorticity_time_series(baroclinic_instability_grid, u_time_series, v_time_series))
+    @info "Interpolating to cell centers for u time series..."
     plot_states[:u] &&
         (u_time_series = interpolate_cubed_sphere_field_time_series_to_cell_centers(baroclinic_instability_grid,
                                                                                     u_time_series, "fc"))
+    @info "Interpolating to cell centers for v time series..."
     plot_states[:v] &&
         (v_time_series = interpolate_cubed_sphere_field_time_series_to_cell_centers(baroclinic_instability_grid,
                                                                                     v_time_series, "cf"))
