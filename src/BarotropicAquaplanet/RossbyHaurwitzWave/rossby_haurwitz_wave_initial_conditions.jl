@@ -97,6 +97,6 @@ function RossbyHaurwitzWaveInitialConditions!(rossby_haurwitz_wave_parameters, r
                               rossby_haurwitz_wave_model.velocities.u, rossby_haurwitz_wave_model.velocities.v)
     fill_halo_regions!((rossby_haurwitz_wave_model.velocities.u, rossby_haurwitz_wave_model.velocities.v))
 
-    set!(rossby_haurwitz_wave_model.free_surface.η, η₀)
-    fill_halo_regions!(rossby_haurwitz_wave_model.free_surface.η)
+    set!(rossby_haurwitz_wave_model.free_surface.displacement, η₀)
+    fill_halo_regions!(rossby_haurwitz_wave_model.free_surface.displacement)
 end

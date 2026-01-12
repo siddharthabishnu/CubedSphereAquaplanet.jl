@@ -36,7 +36,7 @@ function BaroclinicInstabilityOutputs!(baroclinic_instability_parameters, barocl
                    overwrite_existing)
         
     outputs = (; w = baroclinic_instability_model.velocities.w,
-                 η = baroclinic_instability_model.free_surface.η)
+                 η = baroclinic_instability_model.free_surface.displacement)
     output_filename = "baroclinic_instability_surface_diagnostic_fields_output"
     baroclinic_instability_simulation.output_writers[:surface_diagnostic_fields_output] =
         JLD2Writer(baroclinic_instability_model, outputs;

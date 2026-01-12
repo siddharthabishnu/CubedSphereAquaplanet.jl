@@ -67,7 +67,7 @@ function RossbyHaurwitzWaveSimulation(
                       prettytime(simulation.Δt),
                       maximum(abs, simulation.model.velocities.u),
                       maximum(abs, simulation.model.velocities.v),
-                      maximum(abs, simulation.model.free_surface.η),
+                      maximum(abs, simulation.model.free_surface.displacement),
                       progress_message_iteration_interval,
                       prettytime(1e-9 * (time_ns() - wall_time)),
                       prettytime(1e-9 * (time_ns() - start_time)))

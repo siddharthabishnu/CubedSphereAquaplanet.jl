@@ -41,15 +41,15 @@ function BaroclinicInstabilitySimulation(arch;
 
     @info "Building model..."
     baroclinic_instability_model = (
-        HydrostaticFreeSurfaceModel(; grid,
-                                      momentum_advection,
-                                      tracer_advection,
-                                      free_surface,
-                                      coriolis,
-                                      boundary_conditions,
-                                      closure,
-                                      tracers,
-                                      buoyancy))
+        HydrostaticFreeSurfaceModel(grid;
+                                    momentum_advection,
+                                    tracer_advection,
+                                    free_surface,
+                                    coriolis,
+                                    boundary_conditions,
+                                    closure,
+                                    tracers,
+                                    buoyancy))
 
     @info "Initializing model..."
     BaroclinicInstabilityInitialConditions!(parameters, baroclinic_instability_model)
@@ -97,7 +97,7 @@ function BaroclinicInstabilitySimulation(arch;
             maximum(abs, simulation.model.velocities.u),
             maximum(abs, simulation.model.velocities.v),
             maximum(abs, simulation.model.velocities.w),
-            maximum(abs, simulation.model.free_surface.η)
+            maximum(abs, simulation.model.free_surface.displacement)
         )
 
         # Timing info

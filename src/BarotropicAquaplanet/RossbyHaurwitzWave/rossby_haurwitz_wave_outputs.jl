@@ -17,7 +17,7 @@ function RossbyHaurwitzWaveOutputs!(rossby_haurwitz_wave_simulation;
 
     outputs = (; u = rossby_haurwitz_wave_model.velocities.u,
                  v = rossby_haurwitz_wave_model.velocities.v,
-                 η = rossby_haurwitz_wave_model.free_surface.η)
+                 η = rossby_haurwitz_wave_model.free_surface.displacement)
     output_filename = "rossby_haurwitz_wave_output"
     rossby_haurwitz_wave_simulation.output_writers[:output] =
         JLD2Writer(rossby_haurwitz_wave_model, outputs;

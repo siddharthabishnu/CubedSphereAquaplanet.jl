@@ -17,7 +17,7 @@ function BickleyJetOutputs!(bickley_jet_simulation;
 
     outputs = (; u = bickley_jet_model.velocities.u,
                  v = bickley_jet_model.velocities.v,
-                 η = bickley_jet_model.free_surface.η,
+                 η = bickley_jet_model.free_surface.displacement,
                  c = bickley_jet_model.tracers.c)
     output_filename = "bickley_jet_output"
     bickley_jet_simulation.output_writers[:output] =
